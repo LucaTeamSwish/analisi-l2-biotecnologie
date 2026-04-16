@@ -482,13 +482,9 @@ PLOT_LAYOUT = dict(
     plot_bgcolor=BG_PLOT,
     paper_bgcolor=BG_PAPER,
     title_font=dict(size=18, color='white', family='Inter'),
-    legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)'),
     margin=dict(t=80, b=60, l=60, r=30),
     height=500,
 )
-
-XAXIS_DEFAULT = dict(showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-YAXIS_DEFAULT = dict(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
 
 def fonte_annotation(testo):
     return dict(
