@@ -303,13 +303,12 @@ def load_data():
 
     # MUR
     df_imm   = load('MURimmatricolatixclasse.csv')
-    df_1anno = load('MURiscritti1annoxateneo.csv')
     df_lau   = load('MUR_laureatixclasse.csv')
     df_corso = load('MURiscrittixcorsodistudi.csv')
 
     # Filtra L-2
     imm_l2   = df_imm[df_imm['ClasseNUMERO'].astype(str).str.strip() == 'L-2'].copy()
-    anno1_l2 = df_1anno[df_1anno['ClasseNUMERO'].astype(str).str.strip() == 'L-2'].copy()
+    anno1_l2 = pd.DataFrame()  # non usato
     lau_l2   = df_lau[df_lau['ClasseNUMERO'].astype(str).str.strip() == 'L-2'].copy()
     corso_l2 = df_corso[df_corso['ClasseNUMERO'].astype(str).str.strip() == 'L-2'].copy()
 
@@ -344,7 +343,6 @@ def load_data():
                 return area
         return 'Non classificato'
 
-    anno1_l2['macro'] = anno1_l2['AteneoNOME'].apply(get_macro)
     corso_l2['macro'] = corso_l2['AteneoNOME'].apply(get_macro)
 
     # AlmaLaurea
@@ -484,12 +482,13 @@ PLOT_LAYOUT = dict(
     plot_bgcolor=BG_PLOT,
     paper_bgcolor=BG_PAPER,
     title_font=dict(size=18, color='white', family='Inter'),
-    xaxis=dict(showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
-    yaxis=dict(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
     legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)'),
     margin=dict(t=80, b=60, l=60, r=30),
     height=500,
 )
+
+XAXIS_DEFAULT = dict(showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+YAXIS_DEFAULT = dict(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
 
 def fonte_annotation(testo):
     return dict(
@@ -661,12 +660,9 @@ elif sezione == "Domanda Nazionale":
         showarrow=False, font=dict(size=10, color='#F87171'),
         xanchor='left', xshift=6
     )
-    fig1.update_layout(
-        **PLOT_LAYOUT,
-        title='',
-        xaxis=dict(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
-        yaxis=dict(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero'),
-    )
+    fig1.update_layout(**PLOT_LAYOUT, title='')
+    fig1.update_xaxes(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig1.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero')
     st.plotly_chart(fig1, use_container_width=True)
 
     st.markdown("---")
@@ -702,15 +698,9 @@ elif sezione == "Domanda Nazionale":
         bordercolor='#60A5FA', borderwidth=1, ay=-40
     )
     fig2.add_annotation(fonte_annotation('Fonte: MUR-USTAT · Tasso completamento medio: 45.9%'))
-    fig2.update_layout(
-        **PLOT_LAYOUT,
-        title='',
-        showlegend=False,
-        xaxis=dict(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'),
-                   tickmode='linear', dtick=1, linecolor='#374151'),
-        yaxis=dict(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'),
-                   rangemode='tozero', linecolor='#374151'),
-    )
+    fig2.update_layout(**PLOT_LAYOUT, title='', showlegend=False)
+    fig2.update_xaxes(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), tickmode='linear', dtick=1, linecolor='#374151')
+    fig2.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), rangemode='tozero', linecolor='#374151')
     st.plotly_chart(fig2, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -856,11 +846,11 @@ elif sezione == "Geografia":
             buttons=buttons_g4, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
             font=dict(size=12, family='Inter', color='white'), active=len(anni_g4)-1, pad=dict(r=6,l=6,t=6,b=6))],
         annotations=[fonte_annotation('Fonte: ANVUR Cruscotto — Immatricolati puri per ateneo')],
-        xaxis=dict(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
-        yaxis=dict(showgrid=False, tickfont=dict(size=12, color='#D1D5DB'), linecolor='#374151'),
         legend=dict(title=dict(text='Macro area', font=dict(color='#9CA3AF')), font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.75, y=0.05),
         margin=dict(t=120, b=60, l=180, r=80), height=560, barmode='overlay'
     )
+    fig4.update_xaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig4.update_yaxes(showgrid=False, tickfont=dict(size=12, color='#D1D5DB'), linecolor='#374151')
     st.plotly_chart(fig4, use_container_width=True)
 
     st.markdown("---")
@@ -900,11 +890,11 @@ elif sezione == "Geografia":
         **PLOT_LAYOUT,
         title='',
         annotations=[fonte_annotation('Fonte: ANVUR Cruscotto — Dimensione bolla = immatricolati assoluti')],
-        xaxis=dict(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
-        yaxis=dict(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151', range=[0, 70]),
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.99),
         height=520, margin=dict(t=80, b=80, l=60, r=30),
     )
+    fig10.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig10.update_yaxes(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151', range=[0, 70])
     st.plotly_chart(fig10, use_container_width=True)
 
     st.markdown("---")
@@ -957,11 +947,11 @@ elif sezione == "Geografia":
         **PLOT_LAYOUT,
         title='',
         annotations=[fonte_annotation('Fonte: ANVUR Cruscotto · Linee tratteggiate = corsi secondari La Sapienza')],
-        xaxis=dict(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
-        yaxis=dict(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero'),
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.99),
         height=500, margin=dict(t=80, b=80, l=60, r=180),
     )
+    fig9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig9.update_yaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero')
     st.plotly_chart(fig9, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -1084,8 +1074,6 @@ elif sezione == "Profilo Studenti":
 
     fig6.update_layout(
         barmode='stack', **PLOT_LAYOUT, title='',
-        xaxis=dict(title=dict(text='Anno di laurea', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
-        yaxis=dict(title=dict(text='%', font=dict(color='#9CA3AF')), range=[0, 100], ticksuffix='%', gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
         legend=dict(orientation='h', y=1.08, x=0.5, xanchor='center', bgcolor='rgba(0,0,0,0)', font=dict(color='#D1D5DB', size=11)),
         annotations=[
             dict(x=0.5, y=-0.18, xref='paper', yref='paper',
@@ -1095,6 +1083,8 @@ elif sezione == "Profilo Studenti":
         ],
         height=540, margin=dict(t=80, b=100, l=60, r=30),
     )
+    fig6.update_xaxes(title=dict(text='Anno di laurea', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig6.update_yaxes(title=dict(text='%', font=dict(color='#9CA3AF')), range=[0, 100], ticksuffix='%', gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
     st.plotly_chart(fig6, use_container_width=True)
 
     st.markdown("---")
@@ -1361,11 +1351,10 @@ elif sezione == "Varianti del Corso":
                  font=dict(size=10, color='#9CA3AF'), align='center'),
             fonte_annotation('Fonte: ANVUR iC14 · Verde = prosecuzione maggiore · Rosso = minore')
         ],
-        xaxis=dict(title=dict(text='% prosecuzione al II anno', font=dict(color='#9CA3AF')),
-                   showgrid=False, ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151', range=[0, 110]),
-        yaxis=dict(showgrid=False, tickfont=dict(size=10, color='#D1D5DB'), linecolor='#374151'),
         height=580, margin=dict(t=80, b=80, l=300, r=120),
     )
+    fig12.update_xaxes(title=dict(text='% prosecuzione al II anno', font=dict(color='#9CA3AF')), showgrid=False, ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151', range=[0, 110])
+    fig12.update_yaxes(showgrid=False, tickfont=dict(size=10, color='#D1D5DB'), linecolor='#374151')
     st.plotly_chart(fig12, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -1452,13 +1441,11 @@ elif sezione == "Analisi Avanzata":
                  align='right', xanchor='right', bgcolor='#1F2937', bordercolor='#374151', borderwidth=1),
             fonte_annotation('Fonte: ANVUR iC00b + iC14 · Ogni punto = un corso presso un ateneo')
         ],
-        xaxis=dict(title=dict(text='Immatricolati medi per anno (2020–2023)', font=dict(color='#9CA3AF')),
-                   showgrid=True, gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
-        yaxis=dict(title=dict(text='Tasso prosecuzione al II anno (%)', font=dict(color='#9CA3AF')),
-                   showgrid=True, gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151'),
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.01),
         height=540, margin=dict(t=80, b=80, l=70, r=30),
     )
+    fig_corr.update_xaxes(title=dict(text='Immatricolati medi per anno (2020–2023)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig_corr.update_yaxes(title=dict(text='Tasso prosecuzione al II anno (%)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
     st.plotly_chart(fig_corr, use_container_width=True)
 
     st.markdown("---")
