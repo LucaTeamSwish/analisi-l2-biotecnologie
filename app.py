@@ -527,6 +527,7 @@ with st.sidebar:
             "Percorso Accademico",
             "Varianti del Corso",
             "Analisi Avanzata",
+            "Sintesi",
         ],
         label_visibility="collapsed"
     )
@@ -1460,4 +1461,158 @@ elif sezione == "Analisi Avanzata":
     quali la presenza di numero programmato, le caratteristiche del bacino di utenza locale 
     e le politiche di tutoraggio degli atenei.
     </p>
+    """, unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+# SEZIONE: SINTESI
+# ─────────────────────────────────────────────
+elif sezione == "Sintesi":
+    st.markdown("# Sintesi dell'Analisi")
+    st.markdown("---")
+
+    st.markdown("""
+    <p>
+    Questa sezione raccoglie i risultati principali dell'analisi nazionale del Corso di Laurea
+    in Biotecnologie (Classe L-2), condotta su dati ufficiali MUR-USTAT, ANVUR e AlmaLaurea
+    relativi al periodo 2010–2025.
+    </p>
+    """, unsafe_allow_html=True)
+
+    # ── Domanda e offerta ────────────────────────────────────────────────────
+    st.markdown("## 1. Domanda e offerta formativa")
+    st.markdown("""
+    <div class="section-card">
+    <p>
+    In Italia sono <b style="color:#F5F5F7">43 gli atenei</b> che offrono corsi afferenti alla classe L-2 Biotecnologie,
+    distribuiti in tutte le macro aree geografiche. <b style="color:#F5F5F7">Nessun ateneo telematico</b> è presente
+    nell'offerta L-2: la natura laboratoriale del corso lo rende strutturalmente incompatibile
+    con la modalità a distanza.
+    </p>
+    <p>
+    Il numero di <b style="color:#3B82F6">immatricolati puri</b> si attesta intorno alle <b style="color:#F5F5F7">7.076 unità</b>
+    nell'anno accademico 2024/25, un valore sostanzialmente stabile rispetto al periodo
+    pre-pandemia dopo il calo registrato negli anni 2020/21 e 2021/22. Il picco storico
+    è stato raggiunto nel 2018/19.
+    </p>
+    <p>
+    I <b style="color:#3B82F6">laureati</b> sono cresciuti del <b style="color:#F5F5F7">+54%</b> tra il 2010 e il 2024,
+    con un tasso di completamento medio del <b style="color:#F5F5F7">45.9%</b> calcolato confrontando
+    immatricolati e laureati a distanza di tre anni.
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Geografia ────────────────────────────────────────────────────────────
+    st.markdown("## 2. Distribuzione geografica")
+    st.markdown("""
+    <div class="section-card">
+    <p>
+    Il <b style="color:#3B82F6">Nord Italia</b> concentra la quota maggiore di immatricolati,
+    attestandosi stabilmente attorno al <b style="color:#F5F5F7">50–55%</b> del totale nazionale.
+    Il <b style="color:#F59E0B">Centro Italia</b> conta <b style="color:#F5F5F7">11 atenei attivi</b>
+    e una quota di circa il <b style="color:#F5F5F7">27%</b> degli immatricolati.
+    L'<b style="color:#34D399">Ateneo di Perugia</b> è il più grande del Centro con circa 400 immatricolati puri l'anno,
+    seguito dagli atenei laziali (La Sapienza, Tor Vergata, Tuscia).
+    </p>
+    <p>
+    Le regioni <b style="color:#F5F5F7">Molise</b> e <b style="color:#F5F5F7">Valle d'Aosta</b>
+    non ospitano atenei con corsi L-2 attivi.
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Profilo studenti ─────────────────────────────────────────────────────
+    st.markdown("## 3. Profilo e soddisfazione degli studenti")
+    st.markdown("""
+    <div class="section-card">
+    <p>
+    Secondo i dati <b style="color:#F5F5F7">AlmaLaurea</b>, l'<b style="color:#34D399">80.9%</b>
+    dei laureati L-2 si dichiara soddisfatto del corso di studi, con il
+    <b style="color:#34D399">71.5%</b> che si reiscriverebbe allo stesso corso nello stesso ateneo.
+    </p>
+    <p>
+    La <b style="color:#3B82F6">prosecuzione alla laurea magistrale</b> è molto elevata:
+    l'<b style="color:#F5F5F7">87%</b> dei laureati L-2 si iscrive a un corso magistrale entro un anno.
+    Di questi, la quota che sceglie un ateneo del <b style="color:#F59E0B">Centro Italia</b>
+    per la magistrale si attesta attorno al <b style="color:#F5F5F7">8–10%</b>, significativamente
+    inferiore alla quota di chi resta nello stesso ateneo (circa il <b style="color:#F5F5F7">55%</b>)
+    o sceglie un ateneo del Nord.
+    </p>
+    <p>
+    La <b style="color:#FCD34D">retribuzione media</b> a un anno dalla laurea è di
+    <b style="color:#F5F5F7">€896</b> mensili (2024), con un incremento del
+    <b style="color:#34D399">+31%</b> rispetto al 2020, riflettendo però il fatto che
+    l'<b style="color:#F5F5F7">88%</b> dei laureati L-2 prosegue con la magistrale
+    e quindi la quota occupata a breve termine è limitata (<b style="color:#F5F5F7">21.3%</b>).
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Percorso accademico ───────────────────────────────────────────────────
+    st.markdown("## 4. Percorso accademico e abbandoni")
+    st.markdown("""
+    <div class="section-card">
+    <p>
+    Gli indicatori ANVUR AVA2 mostrano che, in media, il
+    <b style="color:#3B82F6">54%</b> degli immatricolati puri L-2 prosegue
+    <b style="color:#F5F5F7">nello stesso corso</b> al secondo anno (indicatore <b>iC14</b>).
+    Un ulteriore <b style="color:#F59E0B">33%</b> si trasferisce ad altro corso o ateneo
+    rimanendo nel sistema universitario (differenza <b>iC21–iC14</b>).
+    Solo il <b style="color:#EF4444">13%</b> abbandona definitivamente l'università
+    (complemento a 1 di <b>iC21</b>).
+    </p>
+    <p>
+    Questo dato è metodologicamente rilevante: il tasso di abbandono
+    <b style="color:#F5F5F7">reale è molto inferiore</b> a quello che si otterrebbe
+    considerando solo chi non prosegue nello stesso corso.
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Varianti e analisi avanzata ───────────────────────────────────────────
+    st.markdown("## 5. Varianti del corso e analisi statistica")
+    st.markdown("""
+    <div class="section-card">
+    <p>
+    Il sistema L-2 presenta <b style="color:#F5F5F7">16 varianti</b> di denominazione.
+    La denominazione <b style="color:#3B82F6">Biotecnologie</b> è di gran lunga la più diffusa
+    (oltre il 70% degli immatricolati), seguita da <i>Biotecnologia</i>,
+    <i>Biotecnologie Industriali</i> e <i>Biotecnologie Mediche</i>.
+    </p>
+    <p>
+    L'analisi di correlazione tra dimensione del corso e tasso di prosecuzione al secondo anno
+    mostra una <b style="color:#EF4444">relazione negativa moderata</b>
+    (<b style="color:#F5F5F7">r = −0.32, p = 0.025, n = 49</b>):
+    i corsi con più immatricolati tendono ad avere tassi di prosecuzione leggermente inferiori.
+    La relazione è statisticamente significativa ma di entità contenuta,
+    e non implica causalità — fattori strutturali come il numero programmato
+    e le politiche di tutoraggio dei singoli atenei giocano un ruolo rilevante.
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Conclusioni ───────────────────────────────────────────────────────────
+    st.markdown("## 6. Considerazioni conclusive")
+    st.markdown("""
+    <div class="section-card" style="border-top: 3px solid #3B82F6;">
+    <p>
+    Il sistema L-2 Biotecnologie presenta caratteristiche di <b style="color:#34D399">solidità strutturale</b>:
+    domanda stabile, elevata soddisfazione degli studenti, quasi assenza di abbandono definitivo
+    e fortissima propensione alla prosecuzione magistrale. L'assenza di atenei telematici
+    garantisce una qualità formativa omogenea legata alla componente laboratoriale.
+    </p>
+    <p>
+    Le principali <b style="color:#F59E0B">aree di attenzione</b> riguardano:
+    la <b style="color:#F5F5F7">quota di trasferimenti</b> verso altri corsi al primo anno (33%),
+    che suggerisce un possibile disallineamento tra aspettative e contenuti del corso;
+    la <b style="color:#F5F5F7">bassa quota di laureati L-2 che sceglie atenei del Centro</b>
+    per la magistrale, che può limitare il bacino di reclutamento locale;
+    e la <b style="color:#F5F5F7">frammentazione in 16 varianti</b> di denominazione,
+    che riduce la riconoscibilità del titolo a livello nazionale.
+    </p>
+    <p style="color:#48484A; font-size:0.82rem; margin-top:1.5rem;">
+    Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 ·
+    Elaborazione: Ufficio Analisi Istituzionale
+    </p>
+    </div>
     """, unsafe_allow_html=True)
