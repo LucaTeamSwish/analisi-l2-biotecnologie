@@ -210,15 +210,33 @@ def load_data():
     profili     = {a: parse_almalaurea_csv(BASE + f'datialmalaureaPROFILO{a}.csv') for a in anni}
     occupazioni = {a: parse_almalaurea_csv(BASE + f'datialmalaureaOCCUPAZIONE{a}.csv') for a in anni}
 
+    def get_soddisfatti(d):
+        for k1 in ['Decisamente sì', 'Decisamente si', 'Decisamente s\xc3\xac', 'Decisamente s\xec']:
+            for k2 in ['Più sì che no', 'Piu si che no', 'Pi\xc3\xb9 s\xc3\xac che no', 'Pi\xf9 s\xec che no']:
+                v1 = d.get(k1, 0) or 0
+                v2 = d.get(k2, 0) or 0
+                if v1 > 0 or v2 > 0:
+                    return round(v1 + v2, 1)
+        return None
+
+    def get_riiscrizione(d):
+        for k in ['Sì, allo stesso corso dell\'Ateneo', 'Si, allo stesso corso dell\'Ateneo',
+                  'S\xc3\xac, allo stesso corso dell\'Ateneo', 'S\xec, allo stesso corso dell\'Ateneo']:
+            v = d.get(k)
+            if v is not None:
+                return v
+        return None
+
     alma_profilo = pd.DataFrame({
         'anno': anni,
         'pct_magistrale':              [profili[a].get('Laurea magistrale biennale') for a in anni],
         'pct_stesso_ateneo_magistrale':[profili[a].get('Stesso Ateneo della laurea di primo livello') for a in anni],
         'pct_magistrale_nord':         [profili[a].get('Altro Ateneo del Nord') for a in anni],
         'pct_magistrale_centro':       [profili[a].get('Altro Ateneo del Centro') for a in anni],
-        'pct_soddisfatti':             [round((profili[a].get('Decisamente s\xc3\xac', 0) or 0) + (profili[a].get('Pi\xc3\xb9 s\xc3\xac che no', 0) or 0), 1) for a in anni],
-        'pct_riiscrizione':            [profili[a].get('S\xc3\xac, allo stesso corso dell\'Ateneo') for a in anni],
+        'pct_soddisfatti':             [get_soddisfatti(profili[a]) for a in anni],
+        'pct_riiscrizione':            [get_riiscrizione(profili[a]) for a in anni],
     })
+    # Laureati
 
     # Laureati
     lau_naz = lau_l2.groupby('AnnoS')['Lau'].sum().reset_index()
