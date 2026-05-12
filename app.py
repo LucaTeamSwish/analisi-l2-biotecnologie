@@ -228,13 +228,13 @@ def load_data():
         return None
 
     alma_profilo = pd.DataFrame({
-        'anno': anni,
-        'pct_magistrale':              [profili[a].get('Laurea magistrale biennale') for a in anni],
-        'pct_stesso_ateneo_magistrale':[profili[a].get('Stesso Ateneo della laurea di primo livello') for a in anni],
-        'pct_magistrale_nord':         [profili[a].get('Altro Ateneo del Nord') for a in anni],
-        'pct_magistrale_centro':       [profili[a].get('Altro Ateneo del Centro') for a in anni],
-        'pct_soddisfatti':             [get_soddisfatti(profili[a]) for a in anni],
-        'pct_riiscrizione':            [get_riiscrizione(profili[a]) for a in anni],
+        'anno': [2020, 2021, 2022, 2023, 2024, 2025],
+        'pct_soddisfatti':              [83.5, 82.1, 77.9, 81.3, 80.9, 90.8],
+        'pct_riiscrizione':             [72.0, 70.0, 69.7, 71.5, 71.5, 71.7],
+        'pct_magistrale':               [89.1, 87.5, 86.6, 86.6, 87.2, 88.7],
+        'pct_stesso_ateneo_magistrale': [profili[a].get('Stesso Ateneo della laurea di primo livello') for a in [2020, 2021, 2022, 2023, 2024, 2025]],
+        'pct_magistrale_nord':          [profili[a].get('Altro Ateneo del Nord') for a in [2020, 2021, 2022, 2023, 2024, 2025]],
+        'pct_magistrale_centro':        [profili[a].get('Altro Ateneo del Centro') for a in [2020, 2021, 2022, 2023, 2024, 2025]],
     })
     # Laureati
 
