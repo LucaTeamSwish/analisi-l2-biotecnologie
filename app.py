@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="Analisi Nazionale L-2 Biotecnologie",
     page_icon="🔬",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"
 )
 
 # ─────────────────────────────────────────────
