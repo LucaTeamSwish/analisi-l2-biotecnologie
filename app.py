@@ -42,6 +42,8 @@ st.markdown("""
     --accent-red: #EF4444;
     --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+[data-testid="collapsedControl"] { display: block !important; visibility: visible !important; }
+[data-testid="stSidebar"] { display: block !important; visibility: visible !important; }
 
 html, body, [data-testid="stAppViewContainer"] {
     background-color: var(--bg-primary) !important;
