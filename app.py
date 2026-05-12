@@ -880,11 +880,15 @@ elif sezione == "Profilo Studenti":
 
     anni_ref = [2020, 2021, 2022, 2023, 2024]
     indicatori_g5 = [
-        ('pct_soddisfatti', 'Soddisfatti del corso', '#3B82F6'),
-        ('pct_riiscrizione', 'Si reiscriverebbero', '#34D399'),
-        ('pct_magistrale', 'Prosegue magistrale', '#818CF8'),
+        ('pct_soddisfatti',  'Soddisfatti del corso', '#3B82F6'),
+        ('pct_riiscrizione', 'Si reiscriverebbero',   '#34D399'),
+        ('pct_magistrale',   'Prosegue magistrale',   '#818CF8'),
     ]
-    val_2025 = {col: float(alma_profilo[alma_profilo['anno']==2025][col].values[0]) for col, _, _ in indicatori_g5}
+    val_2025 = {
+        'pct_soddisfatti': 90.8,
+        'pct_riiscrizione': 71.7,
+        'pct_magistrale': 88.7,
+    }
 
     fig5 = go.Figure()
     for anno_ref in anni_ref:
@@ -894,41 +898,87 @@ elif sezione == "Profilo Studenti":
             fig5.add_trace(go.Indicator(
                 mode='gauge+number+delta',
                 value=val_2025[col],
-                delta={'reference': val_ref, 'suffix': '%', 'relative': False,
-                       'increasing': {'color': '#34D399'}, 'decreasing': {'color': '#F87171'}},
+                delta={
+                    'reference': val_ref,
+                    'suffix': '%',
+                    'relative': False,
+                    'increasing': {'color': '#34D399'},
+                    'decreasing': {'color': '#F87171'},
+                },
                 number={'suffix': '%', 'font': {'size': 40, 'color': colore}},
                 title={'text': f"<b style='color:#D1D5DB'>{titolo}</b><br><span style='font-size:11px;color:#6B7280'>2025 vs {anno_ref}</span>"},
                 gauge={
-                    'axis': {'range': [0, 100], 'ticksuffix': '%', 'tickfont': {'color': '#6B7280'}, 'tickcolor': '#374151'},
+                    'axis': {'range': [0, 100], 'ticksuffix': '%',
+                             'tickfont': {'color': '#6B7280'}, 'tickcolor': '#374151'},
                     'bar': {'color': colore, 'thickness': 0.25},
-                    'bgcolor': '#1F2937', 'borderwidth': 0,
-                    'steps': [{'range': [0, 50], 'color': '#1F2937'}, {'range': [50, 75], 'color': '#243547'}, {'range': [75, 100], 'color': '#1E3A5F'}],
-                    'threshold': {'line': {'color': '#F59E0B', 'width': 3}, 'thickness': 0.75, 'value': val_ref}
+                    'bgcolor': '#1F2937',
+                    'borderwidth': 0,
+                    'steps': [
+                        {'range': [0,  50],  'color': '#1F2937'},
+                        {'range': [50, 75],  'color': '#243547'},
+                        {'range': [75, 100], 'color': '#1E3A5F'},
+                    ],
+                    'threshold': {
+                        'line': {'color': '#F59E0B', 'width': 3},
+                        'thickness': 0.75,
+                        'value': val_ref
+                    }
                 },
-                domain={'x': [col_idx * 0.34, col_idx * 0.34 + 0.30], 'y': [0, 1]},
+                domain={
+                    'x': [col_idx * 0.34, col_idx * 0.34 + 0.30],
+                    'y': [0, 1]
+                },
                 visible=visible,
             ))
 
+    n_per_anno = len(indicatori_g5)
     buttons_g5 = []
-    for anno_ref in anni_ref:
-        n_per_anno = len(indicatori_g5)
+    for i, anno_ref in enumerate(anni_ref):
         vis = []
-        for ar in anni_ref:
-            vis += [ar == anno_ref] * n_per_anno
-        buttons_g5.append(dict(label=f'vs {anno_ref}', method='update',
-            args=[{'visible': vis}, {'title': dict(text=f'Profilo laureati L-2 — 2025 vs {anno_ref}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
+        for j in range(len(anni_ref)):
+            vis += [j == i] * n_per_anno
+        buttons_g5.append(dict(
+            label=f'vs {anno_ref}',
+            method='update',
+            args=[
+                {'visible': vis},
+                {'title': dict(
+                    text=f'Profilo laureati L-2 — 2025 vs {anno_ref}',
+                    font=dict(size=18, color='white', family='Inter'),
+                    x=0.5, xanchor='center'
+                )}
+            ]
+        ))
 
     fig5.update_layout(
-        title=dict(text='Profilo laureati L-2 — 2025 vs 2024', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
-        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.15, yanchor='top',
-            buttons=buttons_g5, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
-            font=dict(size=12, family='Inter', color='white'), active=len(anni_ref)-1, pad=dict(r=6,l=6,t=6,b=6))],
-        height=420, margin=dict(t=100, b=60, l=30, r=30),
-        font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER,
+        title=dict(
+            text='Profilo laureati L-2 Biotecnologie — 2025 vs 2024',
+            font=dict(size=18, color='white', family='Inter'),
+            x=0.5, xanchor='center'
+        ),
+        updatemenus=[dict(
+            type='buttons',
+            direction='right',
+            x=0.5, xanchor='center',
+            y=1.35, yanchor='top',
+            buttons=buttons_g5,
+            bgcolor='#1F2937',
+            bordercolor='#3B82F6',
+            borderwidth=1,
+            font=dict(size=12, family='Inter', color='white'),
+            active=len(anni_ref)-1,
+            pad=dict(r=6, l=6, t=6, b=6),
+        )],
+        height=480,
+        margin=dict(t=140, b=60, l=30, r=30),
+        font=dict(family='Inter', size=12),
+        paper_bgcolor=BG_PAPER,
         annotations=[
-            dict(x=0.5, y=-0.12, xref='paper', yref='paper',
-                 text='La linea arancione indica il valore dell\'anno di riferimento selezionato',
-                 showarrow=False, font=dict(size=11, color='#6B7280'), align='center'),
+            dict(
+                x=0.5, y=-0.12, xref='paper', yref='paper',
+                text="La linea arancione indica il valore dell'anno di riferimento selezionato",
+                showarrow=False, font=dict(size=11, color='#6B7280'), align='center'
+            ),
             fonte_annotation('Fonte: AlmaLaurea — Profilo dei Laureati')
         ]
     )
