@@ -135,6 +135,7 @@ def check_password():
 
 if not check_password():
     st.stop()
+    st.session_state['sidebar_state'] = 'expanded'
 
 # ─────────────────────────────────────────────
 # CARICAMENTO DATI
