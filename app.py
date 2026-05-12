@@ -135,7 +135,6 @@ def check_password():
             else:
                 st.error("Codice non valido")
 
-con questo sicuro?
     return False
 
 if not check_password():
