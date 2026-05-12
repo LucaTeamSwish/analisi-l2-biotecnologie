@@ -27,19 +27,19 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-    --bg-primary: #0A0A0F;
-    --bg-secondary: #111118;
-    --bg-card: #16161E;
-    --bg-card-hover: #1C1C26;
-    --border: rgba(255,255,255,0.06);
-    --border-accent: rgba(59,130,246,0.3);
-    --text-primary: #F5F5F7;
-    --text-secondary: #86868B;
-    --text-tertiary: #48484A;
-    --accent-blue: #3B82F6;
-    --accent-amber: #F59E0B;
-    --accent-green: #34D399;
-    --accent-red: #EF4444;
+    --bg-primary: #0A0F1E;
+    --bg-secondary: #0D1526;
+    --bg-card: #111D35;
+    --bg-card-hover: #162440;
+    --border: rgba(59,130,246,0.12);
+    --border-accent: rgba(59,130,246,0.4);
+    --text-primary: #F0F4FF;
+    --text-secondary: #A8B8D8;
+    --text-tertiary: #6B7FA8;
+    --accent-blue: #4F9EFF;
+    --accent-amber: #FFB020;
+    --accent-green: #3DFFA0;
+    --accent-red: #FF5A5A;
     --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 [data-testid="collapsedControl"] { display: block !important; visibility: visible !important; }
@@ -404,8 +404,8 @@ with st.spinner("Caricamento dati in corso..."):
 GEOJSON_URL = "https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson"
 GRIGIO_SCURO = ["Valle d'Aosta/Vallée d'Aoste", 'Molise']
 COLORI_MACRO = {'Nord': '#3B82F6', 'Centro': '#10B981', 'Sud': '#F59E0B', 'Isole': '#8B5CF6'}
-BG_PLOT = '#111111'
-BG_PAPER = '#1C1C1E'
+BG_PLOT = '#0D1526'
+BG_PAPER = '#0A0F1E'
 
 PLOT_LAYOUT = dict(
     font=dict(family='Inter', size=12),
