@@ -96,12 +96,24 @@ hr { border-color: var(--border) !important; margin: 2rem 0 !important; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+[data-testid="stForm"] button {
+    background: #3B82F6 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important;
+    font-size: 1rem !important;
+    letter-spacing: 0.02em !important;
+}
+[data-testid="stForm"] button:hover {
+    background: #2563EB !important;
+    transform: translateY(-1px) !important;
+}
+
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
 [data-testid="stToolbarActions"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
-
 # ─────────────────────────────────────────────
 # PASSWORD
 # ─────────────────────────────────────────────
@@ -118,7 +130,7 @@ def check_password():
             <div style='font-size:2.5rem; font-weight:700; letter-spacing:-0.04em; color:#F5F5F7;'>
                 Analisi Nazionale<br>L-2 Biotecnologie
             </div>
-            <div style='color:#86868B; margin-top:0.75rem; font-size:0.95rem; font-weight:300;'>
+            <div style='color:#A8B8D8; margin-top:0.75rem; font-size:1rem; font-weight:700;'>
                 Accesso riservato
             </div>
         </div>
