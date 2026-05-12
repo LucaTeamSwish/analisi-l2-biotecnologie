@@ -889,7 +889,6 @@ elif sezione == "Profilo Studenti":
         'pct_riiscrizione': 71.7,
         'pct_magistrale': 88.7,
     }
-
     fig5 = go.Figure()
     for anno_ref in anni_ref:
         visible = (anno_ref == 2024)
@@ -930,7 +929,6 @@ elif sezione == "Profilo Studenti":
                 },
                 visible=visible,
             ))
-
     n_per_anno = len(indicatori_g5)
     buttons_g5 = []
     for i, anno_ref in enumerate(anni_ref):
@@ -944,34 +942,33 @@ elif sezione == "Profilo Studenti":
                 {'visible': vis},
                 {'title': dict(
                     text=f'Profilo laureati L-2 — 2025 vs {anno_ref}',
-                    font=dict(size=18, color='white', family='Inter'),
+                    font=dict(size=20, color='white', family='Arial'),
                     x=0.5, xanchor='center'
                 )}
             ]
         ))
-
     fig5.update_layout(
         title=dict(
             text='Profilo laureati L-2 Biotecnologie — 2025 vs 2024',
-            font=dict(size=18, color='white', family='Inter'),
+            font=dict(size=20, color='white', family='Arial'),
             x=0.5, xanchor='center'
         ),
         updatemenus=[dict(
             type='buttons',
             direction='right',
             x=0.5, xanchor='center',
-            y=1.35, yanchor='top',
+            y=1.55, yanchor='top',
             buttons=buttons_g5,
             bgcolor='#1F2937',
             bordercolor='#3B82F6',
             borderwidth=1,
-            font=dict(size=12, family='Inter', color='white'),
+            font=dict(size=12, family='Arial', color='white'),
             active=len(anni_ref)-1,
             pad=dict(r=6, l=6, t=6, b=6),
         )],
-        height=480,
-        margin=dict(t=140, b=60, l=30, r=30),
-        font=dict(family='Inter', size=12),
+        height=420,
+        margin=dict(t=195, b=60, l=30, r=30),
+        font=dict(family='Arial', size=12),
         paper_bgcolor=BG_PAPER,
         annotations=[
             dict(
@@ -983,7 +980,6 @@ elif sezione == "Profilo Studenti":
         ]
     )
     st.plotly_chart(fig5, use_container_width=True)
-
     st.markdown("---")
 
     # G6 — Magistrale
