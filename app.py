@@ -124,16 +124,16 @@ def check_password():
         </div>
         """, unsafe_allow_html=True)
         with st.form("login_form"):
-        pwd = st.text_input("Codice di accesso", type="password", 
-                           label_visibility="collapsed",
-                           placeholder="Inserisci il codice di accesso")
-        submitted = st.form_submit_button("Accedi", use_container_width=True)
-        if submitted:
-            if pwd == "L2":
-                st.session_state.authenticated = True
-                st.rerun()
-            else:
-                st.error("Codice non valido")
+            pwd = st.text_input("Codice di accesso", type="password", 
+                               label_visibility="collapsed",
+                               placeholder="Inserisci il codice di accesso")
+            submitted = st.form_submit_button("Accedi", use_container_width=True)
+            if submitted:
+                if pwd == "L2":
+                    st.session_state.authenticated = True
+                    st.rerun()
+                else:
+                    st.error("Codice non valido")
 
     return False
 
