@@ -1197,7 +1197,57 @@ elif sezione == "Percorso Accademico":
 elif sezione == "Avvii di Carriera":
     st.markdown("## Avvii di Carriera")
     st.markdown("---")
+avvi_naz = df_avvi.groupby('Anno accademico')['Numeratore'].sum().reset_index()
+    avvi_naz.columns = ['anno', 'avvii']
+    media_avvi = avvi_naz['avvii'].mean()
+    colori_avvi = ['#3B82F6' if a != avvi_naz['anno'].max() else '#60A5FA' for a in avvi_naz['anno']]
 
+    fig_avvi = go.Figure()
+    fig_avvi.add_trace(go.Scatter(
+        x=[avvi_naz['anno'].min() - 0.5, avvi_naz['anno'].max() + 0.5],
+        y=[media_avvi, media_avvi],
+        mode='lines',
+        line=dict(color='#F59E0B', width=2, dash='dash'),
+        name=f'Media avvii di carriera: {media_avvi:,.0f}',
+        hoverinfo='skip'
+    ))
+    fig_avvi.add_trace(go.Bar(
+        x=avvi_naz['anno'], y=avvi_naz['avvii'],
+        marker=dict(color=colori_avvi, line=dict(color='rgba(0,0,0,0)', width=0), cornerradius=6),
+        text=avvi_naz['avvii'].apply(lambda x: f'{x:,.0f}'),
+        textposition='outside',
+        textfont=dict(color='#D1D5DB', size=13, family='Inter'),
+        hovertemplate='<b>%{x}</b><br>Avvii di carriera: <b>%{y:,.0f}</b><extra></extra>',
+        name='Avvii di carriera'
+    ))
+    for i, row in avvi_naz.iterrows():
+        if i == 0:
+            continue
+        var = (row['avvii'] - avvi_naz.loc[i-1, 'avvii']) / avvi_naz.loc[i-1, 'avvii'] * 100
+        colore = '#34D399' if var >= 0 else '#F87171'
+        simbolo = '▲' if var >= 0 else '▼'
+        fig_avvi.add_annotation(
+            x=row['anno'], y=row['avvii'] * 0.5,
+            text=f"{simbolo} {abs(var):.1f}%",
+            showarrow=False, font=dict(size=11, color=colore, family='Inter'),
+        )
+
+    fig_avvi.update_layout(
+        **PLOT_LAYOUT, title='',
+        showlegend=True,
+        legend=dict(font=dict(color='#D1D5DB', size=11), bgcolor='rgba(0,0,0,0)', orientation='h', x=0.5, xanchor='center', y=1.08),
+        margin=dict(t=100, b=80, l=70, r=30), height=520,
+        annotations=[dict(
+            x=0.99, y=-0.13, xref='paper', yref='paper',
+            text='Fonte: ANVUR Cruscotto PENTAHO — Avvii di carriera al primo anno (iC00a)',
+            showarrow=False, font=dict(size=10, color='#6B7280'), xanchor='right', align='right'
+        )]
+    )
+    fig_avvi.update_xaxes(showgrid=False, tickfont=dict(color='#9CA3AF', size=13), linecolor='#374151', tickmode='linear', dtick=1)
+    fig_avvi.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero',
+                          title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')),
+                          range=[0, avvi_naz['avvii'].max() * 1.2])
+    st.plotly_chart(fig_avvi, use_container_width=True)
     # G17 — Mappa avvii
     chart_header(
         "Avvii di carriera L-2 per regione",
@@ -1582,57 +1632,7 @@ elif sezione == "Analisi Avanzata":
         "Passa il cursore sulle barre per vedere il valore esatto."
     )
 
-    avvi_naz = df_avvi.groupby('Anno accademico')['Numeratore'].sum().reset_index()
-    avvi_naz.columns = ['anno', 'avvii']
-    media_avvi = avvi_naz['avvii'].mean()
-    colori_avvi = ['#3B82F6' if a != avvi_naz['anno'].max() else '#60A5FA' for a in avvi_naz['anno']]
-
-    fig_avvi = go.Figure()
-    fig_avvi.add_trace(go.Scatter(
-        x=[avvi_naz['anno'].min() - 0.5, avvi_naz['anno'].max() + 0.5],
-        y=[media_avvi, media_avvi],
-        mode='lines',
-        line=dict(color='#F59E0B', width=2, dash='dash'),
-        name=f'Media avvii di carriera: {media_avvi:,.0f}',
-        hoverinfo='skip'
-    ))
-    fig_avvi.add_trace(go.Bar(
-        x=avvi_naz['anno'], y=avvi_naz['avvii'],
-        marker=dict(color=colori_avvi, line=dict(color='rgba(0,0,0,0)', width=0), cornerradius=6),
-        text=avvi_naz['avvii'].apply(lambda x: f'{x:,.0f}'),
-        textposition='outside',
-        textfont=dict(color='#D1D5DB', size=13, family='Inter'),
-        hovertemplate='<b>%{x}</b><br>Avvii di carriera: <b>%{y:,.0f}</b><extra></extra>',
-        name='Avvii di carriera'
-    ))
-    for i, row in avvi_naz.iterrows():
-        if i == 0:
-            continue
-        var = (row['avvii'] - avvi_naz.loc[i-1, 'avvii']) / avvi_naz.loc[i-1, 'avvii'] * 100
-        colore = '#34D399' if var >= 0 else '#F87171'
-        simbolo = '▲' if var >= 0 else '▼'
-        fig_avvi.add_annotation(
-            x=row['anno'], y=row['avvii'] * 0.5,
-            text=f"{simbolo} {abs(var):.1f}%",
-            showarrow=False, font=dict(size=11, color=colore, family='Inter'),
-        )
-
-    fig_avvi.update_layout(
-        **PLOT_LAYOUT, title='',
-        showlegend=True,
-        legend=dict(font=dict(color='#D1D5DB', size=11), bgcolor='rgba(0,0,0,0)', orientation='h', x=0.5, xanchor='center', y=1.08),
-        margin=dict(t=100, b=80, l=70, r=30), height=520,
-        annotations=[dict(
-            x=0.99, y=-0.13, xref='paper', yref='paper',
-            text='Fonte: ANVUR Cruscotto PENTAHO — Avvii di carriera al primo anno (iC00a)',
-            showarrow=False, font=dict(size=10, color='#6B7280'), xanchor='right', align='right'
-        )]
-    )
-    fig_avvi.update_xaxes(showgrid=False, tickfont=dict(color='#9CA3AF', size=13), linecolor='#374151', tickmode='linear', dtick=1)
-    fig_avvi.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero',
-                          title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')),
-                          range=[0, avvi_naz['avvii'].max() * 1.2])
-    st.plotly_chart(fig_avvi, use_container_width=True)
+    
 
     st.markdown("---")
 
