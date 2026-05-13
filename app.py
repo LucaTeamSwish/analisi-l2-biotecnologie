@@ -513,13 +513,6 @@ with st.sidebar:
 sezione = st.session_state.sezione
 sottosezione = st.session_state.sottosezione
 
-    st.markdown("---")
-    st.markdown("""
-    <div style='font-size:0.72rem; color:#48484A; line-height:1.6;'>
-        Fonti: MUR-USTAT, ANVUR,<br>AlmaLaurea · Dati 2010–2025
-    </div>
-    """, unsafe_allow_html=True)
-
 # ─────────────────────────────────────────────
 # SEZIONE: PANORAMICA
 # ─────────────────────────────────────────────
