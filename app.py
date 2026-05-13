@@ -414,7 +414,7 @@ def load_data():
 
 with st.spinner("Caricamento dati in corso..."):
     (imm_l2, anno1_l2, lau_l2, corso_l2, lau_naz, imm_naz,
-     alma_profilo, df_anvur, df_ava2, df_avvi, df_lau_corso, df_ic16,  df_ic14_ic21) = load_data()
+     alma_profilo, df_anvur, df_ava2, df_avvi, df_lau_corso, df_ic16) = load_data()
 
 # Costanti
 GEOJSON_URL = "https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson"
