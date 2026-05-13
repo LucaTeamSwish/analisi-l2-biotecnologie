@@ -27,15 +27,15 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-    --bg-primary: #0A0F1E;
-    --bg-secondary: #0D1526;
-    --bg-card: #111D35;
-    --bg-card-hover: #162440;
-    --border: rgba(59,130,246,0.12);
+    --bg-primary: #0D1B2E;
+    --bg-secondary: #112240;
+    --bg-card: #1A2F4A;
+    --bg-card-hover: #1E3550;
+    --border: rgba(255,255,255,0.08);
     --border-accent: rgba(59,130,246,0.4);
-    --text-primary: #F0F4FF;
-    --text-secondary: #A8B8D8;
-    --text-tertiary: #6B7FA8;
+    --text-primary: #E8F0FE;
+    --text-secondary: #B8C8E0;
+    --text-tertiary: #7A9CC0;
     --accent-blue: #4F9EFF;
     --accent-amber: #FFB020;
     --accent-green: #3DFFA0;
@@ -420,8 +420,8 @@ with st.spinner("Caricamento dati in corso..."):
 GEOJSON_URL = "https://raw.githubusercontent.com/openpolis/geojson-italy/master/geojson/limits_IT_regions.geojson"
 GRIGIO_SCURO = ["Valle d'Aosta/Vallée d'Aoste", 'Molise']
 COLORI_MACRO = {'Nord': '#3B82F6', 'Centro': '#10B981', 'Sud': '#F59E0B', 'Isole': '#8B5CF6'}
-BG_PLOT = '#0D1526'
-BG_PAPER = '#0A0F1E'
+BG_PLOT = '#112240'
+BG_PAPER = '#112240'
 
 PLOT_LAYOUT = dict(
     font=dict(family='Inter', size=12),
