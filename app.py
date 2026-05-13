@@ -511,7 +511,7 @@ with st.sidebar:
 
 # Leggi sezione e sottosezione dal session state
 sezione = st.session_state.sezione
-sottosezione = st.session_state.sottosezione)
+sottosezione = st.session_state.sottosezione
 
     st.markdown("---")
     st.markdown("""
