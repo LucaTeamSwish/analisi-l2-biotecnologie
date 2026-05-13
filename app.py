@@ -1258,7 +1258,7 @@ elif sezione == "Avvii di Carriera":
                           range=[0, avvi_naz['avvii'].max() * 1.2])
     st.plotly_chart(fig_avvi, use_container_width=True)
     
-    )
+    
     # G17 — Mappa avvii
     chart_header(
         "Avvii di carriera L-2 per regione",
