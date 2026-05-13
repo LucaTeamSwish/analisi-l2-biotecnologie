@@ -34,8 +34,8 @@ st.markdown("""
     --border: rgba(255,255,255,0.08);
     --border-accent: rgba(59,130,246,0.4);
     --text-primary: #E8F0FE;
-    --text-secondary: #B8C8E0;
-    --text-tertiary: #7A9CC0;
+    --text-secondary: #C8C8C8;
+    --text-tertiary: #C8C8C8;
     --accent-blue: #4F9EFF;
     --accent-amber: #FFB020;
     --accent-green: #3DFFA0;
@@ -514,7 +514,7 @@ if sezione == "Panoramica":
         with col:
             st.markdown(f"""
             <div class="section-card" style="border-top: 3px solid {k['color']}; padding: 1.25rem;">
-                <div style="font-size:0.75rem; color:#86868B; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">{k['label']}</div>
+                <div style="font-size:0.75rem; color:#C8C8C8; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">{k['label']}</div>
                 <div style="font-size:2rem; font-weight:700; color:{k['color']}; letter-spacing:-0.03em;">{k['value']}</div>
                 <div style="font-size:0.78rem; color:#C8C8C8; margin-top:0.25rem;">{k['delta']}</div>
             </div>
@@ -540,7 +540,7 @@ if sezione == "Panoramica":
             <div style="width:3px; background:{col}; border-radius:2px; min-height:40px; flex-shrink:0;"></div>
             <div>
                 <div style="font-size:0.9rem; font-weight:600; color:#F5F5F7; margin-bottom:0.25rem;">{nome}</div>
-                <div style="font-size:0.82rem; color:#86868B; font-weight:300;">{desc}</div>
+                <div style="font-size:0.82rem; color:#C8C8C8; font-weight:300;">{desc}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
