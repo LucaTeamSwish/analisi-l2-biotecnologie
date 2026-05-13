@@ -343,7 +343,6 @@ def load_data():
 
     # Nuovi file PENTAHO
     df_avvi = pd.read_csv(BASE + 'avvidicarriera(L2)Penthaoo.csv')
-    df_ic14_ic21 = pd.read_csv(BASE + 'ic14_ic21(L2).csv')
     df_lau_corso = pd.read_csv(BASE + '%di_laureati(L2)entroLaDurataDelCorso.csv')
     df_ic16 = pd.read_csv(BASE + 'IC16bis(L2)Penthaoo.csv')
 
@@ -1063,14 +1062,16 @@ elif sezione == "Percorso Accademico":
         "Seleziona l'anno con i pulsanti."
     )
 
-    ic14_new = df_ic14_ic21[df_ic14_ic21['ID Indicatore'] == 'iC14'].copy()
-    ic21_new = df_ic14_ic21[df_ic14_ic21['ID Indicatore'] == 'iC21'].copy()
+    ic14 = df_ava2[df_ava2['CODICE'] == 'iC14'].copy()
+    ic21 = df_ava2[df_ava2['CODICE'] == 'iC21'].copy()
+    for df_ind in [ic14, ic21]:
+        df_ind['ind_float'] = (df_ind['INDICATORE'].astype(str).str.strip()
+            .str.replace(',', '.').str.replace(' ', '')
+            .apply(lambda x: float(x) if x not in ['', 'nan', 'None'] else None))
 
-    ic14_naz = ic14_new.groupby('Anno accademico')['Numeratore'].mean().reset_index()
+    ic14_naz = ic14.groupby('ID_ANNO_ACCADEMICO')['ind_float'].mean().reset_index()
     ic14_naz.columns = ['anno', 'ic14']
-    ic14_naz['ic14'] = ic14_naz['ic14'] / 100
-
-    ic21_naz = ic21_new.groupby('Anno accademico')['Numeratore'].mean().reset_index()
+    ic21_naz = ic21.groupby('ID_ANNO_ACCADEMICO')['ind_float'].mean().reset_index()
     ic21_naz.columns = ['anno', 'ic21']
     ic21_naz['ic21'] = ic21_naz['ic21'] / 100
     df_destino = ic14_naz.merge(ic21_naz, on='anno')
