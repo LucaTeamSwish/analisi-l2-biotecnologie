@@ -1634,19 +1634,6 @@ elif sezione == "Analisi Avanzata":
     st.markdown("## Analisi Avanzata")
     st.markdown("---")
 
-    # G14 — Avvii di carriera bar chart
-    chart_header(
-        "Avvii di Carriera al Primo Anno — L-2 Biotecnologie",
-        "Numero totale nazionale di avvii di carriera al primo anno per anno accademico. "
-        "Le variazioni percentuali rispetto all'anno precedente sono indicate all'interno delle barre. "
-        "Il 2025 è evidenziato in azzurro chiaro.",
-        "Passa il cursore sulle barre per vedere il valore esatto."
-    )
-
-    
-
-    st.markdown("---")
-
     # G16 — iC16bis radial
     chart_header(
         "Studenti al II Anno con ≥ 2/3 CFU — iC16bis",
