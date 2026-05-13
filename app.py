@@ -1073,7 +1073,6 @@ elif sezione == "Percorso Accademico":
     ic14_naz.columns = ['anno', 'ic14']
     ic21_naz = ic21.groupby('ID_ANNO_ACCADEMICO')['ind_float'].mean().reset_index()
     ic21_naz.columns = ['anno', 'ic21']
-    ic21_naz['ic21'] = ic21_naz['ic21'] / 100
     df_destino = ic14_naz.merge(ic21_naz, on='anno')
     df_destino['prosegue_stesso'] = (df_destino['ic14'] * 100).round(1)
     df_destino['cambia_corso']    = ((df_destino['ic21'] - df_destino['ic14']) * 100).round(1)
