@@ -469,7 +469,6 @@ with st.sidebar:
             "Geografia",
             "Profilo Studenti",
             "Percorso Accademico",
-            "Avvii di Carriera",
             "Varianti del Corso",
             "Analisi Avanzata",
             "Sintesi",
