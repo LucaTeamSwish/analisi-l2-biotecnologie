@@ -434,7 +434,7 @@ def fonte_annotation(testo):
     return dict(
         x=0.99, y=-0.13, xref='paper', yref='paper',
         text=testo, showarrow=False,
-        font=dict(size=10, color='#6B7280'),
+        font=dict(size=10, color='#7A9CC0'),
         align='right', xanchor='right'
     )
 
@@ -713,7 +713,7 @@ elif sezione == "Geografia":
         annotations=[
             dict(x=0.01, y=-0.02, xref='paper', yref='paper',
                  text="Grigio scuro: Molise e Valle d'Aosta — nessun corso L-2 attivo",
-                 showarrow=False, font=dict(size=10, color='#6B7280'), align='left'),
+                 showarrow=False, font=dict(size=10, color='#7A9CC0'), align='left'),
             fonte_annotation('Fonte: ANVUR Cruscotto')
         ],
         margin=dict(r=20, t=110, l=0, b=40), height=650,
@@ -993,7 +993,7 @@ elif sezione == "Profilo Studenti":
             dict(
                 x=0.5, y=-0.12, xref='paper', yref='paper',
                 text="La linea arancione indica il valore dell'anno di riferimento selezionato",
-                showarrow=False, font=dict(size=11, color='#6B7280'), align='center'
+                showarrow=False, font=dict(size=11, color='#7A9CC0'), align='center'
             ),
             fonte_annotation('Fonte: AlmaLaurea — Profilo dei Laureati')
         ]
@@ -1107,7 +1107,7 @@ elif sezione == "Percorso Accademico":
                          font=dict(size=24, color='white', family='Inter'), align='center'),
                     dict(x=0.99, y=-0.12, xref='paper', yref='paper',
                          text='Fonte: ANVUR iC14 + iC21 · Media nazionale corsi L-2',
-                         showarrow=False, font=dict(size=10, color='#6B7280'), align='right', xanchor='right')
+                         showarrow=False, font=dict(size=10, color='#7A9CC0'), align='right', xanchor='right')
                 ]
             }]))
 
@@ -1123,7 +1123,7 @@ elif sezione == "Percorso Accademico":
                  font=dict(size=24, color='white', family='Inter'), align='center'),
             dict(x=0.99, y=-0.12, xref='paper', yref='paper',
                  text='Fonte: ANVUR iC14 + iC21 · Media nazionale corsi L-2',
-                 showarrow=False, font=dict(size=10, color='#6B7280'), align='right', xanchor='right')
+                 showarrow=False, font=dict(size=10, color='#7A9CC0'), align='right', xanchor='right')
         ],
         height=580, margin=dict(t=120, b=80, l=80, r=80),
         font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER,
@@ -1183,7 +1183,7 @@ elif sezione == "Percorso Accademico":
         annotations=[dict(
             x=0.99, y=-0.13, xref='paper', yref='paper',
             text='Fonte: ANVUR Cruscotto PENTAHO — % laureati entro durata normale (iC02)',
-            showarrow=False, font=dict(size=10, color='#6B7280'),
+            showarrow=False, font=dict(size=10, color='#7A9CC0'),
             xanchor='right', align='right'
         )]
     )
@@ -1249,7 +1249,7 @@ elif sezione == "Avvii di Carriera":
         annotations=[dict(
             x=0.99, y=-0.13, xref='paper', yref='paper',
             text='Fonte: ANVUR Cruscotto PENTAHO — Avvii di carriera al primo anno (iC00a)',
-            showarrow=False, font=dict(size=10, color='#6B7280'), xanchor='right', align='right'
+            showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right', align='right'
         )]
     )
     fig_avvi.update_xaxes(showgrid=False, tickfont=dict(color='#9CA3AF', size=13), linecolor='#C8C8C8', tickmode='linear', dtick=1)
@@ -1333,10 +1333,10 @@ elif sezione == "Avvii di Carriera":
         annotations=[
             dict(x=0.01, y=-0.02, xref='paper', yref='paper',
                  text="Grigio scuro: Molise e Valle d'Aosta — nessun corso L-2 attivo",
-                 showarrow=False, font=dict(size=10, color='#6B7280'), align='left'),
+                 showarrow=False, font=dict(size=10, color='#7A9CC0'), align='left'),
             dict(x=0.99, y=-0.02, xref='paper', yref='paper',
                  text='Fonte: ANVUR Cruscotto PENTAHO — Avvii di carriera al primo anno (iC00a)',
-                 showarrow=False, font=dict(size=10, color='#6B7280'), xanchor='right', align='right')
+                 showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right', align='right')
         ],
         margin=dict(r=20, t=110, l=0, b=40), height=650,
         font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER, geo=dict(bgcolor=BG_PAPER),
@@ -1612,7 +1612,7 @@ elif sezione == "Varianti del Corso":
         hovertemplate='<b>%{y}</b><br>Prosecuzione: <b>%{x:.1f}%</b><br>Abbandono: <b>%{customdata[0]:.1f}%</b><br>N° atenei: <b>%{customdata[1]}</b><extra></extra>',
         customdata=list(zip(ic14_var_sorted['abbandono'], ic14_var_sorted['n_atenei'])),
     ))
-    fig12.add_vline(x=baseline, line=dict(color='#6B7280', width=2, dash='dash'))
+    fig12.add_vline(x=baseline, line=dict(color='#7A9CC0', width=2, dash='dash'))
     fig12.update_layout(
         **PLOT_LAYOUT, title='',
         annotations=[
@@ -1696,7 +1696,7 @@ elif sezione == "Analisi Avanzata":
                  showarrow=False, font=dict(size=11, color='#9CA3AF', family='Inter')),
             dict(x=0.99, y=-0.08, xref='paper', yref='paper',
                  text='Fonte: ANVUR Cruscotto PENTAHO — iC16bis',
-                 showarrow=False, font=dict(size=10, color='#6B7280'), xanchor='right', align='right')
+                 showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right', align='right')
         ]
     )
     st.plotly_chart(fig_radial, use_container_width=True)
