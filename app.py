@@ -461,20 +461,57 @@ with st.sidebar:
 
     st.markdown('<div class="sidebar-title">Sezioni</div>', unsafe_allow_html=True)
 
-    sezione = st.radio(
-        label="",
-        options=[
-            "Panoramica",
-            "Iscritti",
-            "Geografia",
-            "Profilo Studenti",
-            "Percorso Accademico",
-            "Avvii di Carriera",
-            "Varianti del Corso",
-            "Analisi Avanzata",
-            "Sintesi",
-        ],
-        label_visibility="collapsed"
+    # Inizializza sezione nel session state
+    if 'sezione' not in st.session_state:
+        st.session_state.sezione = 'Panoramica'
+    if 'sottosezione' not in st.session_state:
+        st.session_state.sottosezione = None
+
+    def nav_button(label, sezione, sottosezione=None):
+        is_active = (st.session_state.sezione == sezione and 
+                     st.session_state.sottosezione == sottosezione)
+        color = '#3B82F6' if is_active else 'transparent'
+        text_color = 'white' if is_active else '#86868B'
+        if st.button(label, key=f"btn_{sezione}_{sottosezione}",
+                     use_container_width=True):
+            st.session_state.sezione = sezione
+            st.session_state.sottosezione = sottosezione
+            st.rerun()
+
+    # Panoramica
+    nav_button("🔬 Panoramica", "Panoramica")
+
+    # Immatricolati
+    with st.expander("📊 Immatricolati", expanded=(st.session_state.sezione == 'Immatricolati')):
+        nav_button("  • Trend Nazionale", "Immatricolati", "Trend")
+        nav_button("  • Geografia", "Immatricolati", "Geografia")
+        nav_button("  • Trend Lazio", "Immatricolati", "Lazio")
+
+    # Avvii di Carriera
+    with st.expander("🚀 Avvii di Carriera", expanded=(st.session_state.sezione == 'Avvii di Carriera')):
+        nav_button("  • Trend Nazionale", "Avvii di Carriera", "Trend")
+        nav_button("  • Mappa", "Avvii di Carriera", "Mappa")
+        nav_button("  • Top Atenei", "Avvii di Carriera", "Top Atenei")
+        nav_button("  • Trend Lazio", "Avvii di Carriera", "Lazio")
+        nav_button("  • Macro Aree", "Avvii di Carriera", "Macro Aree")
+
+    # Sezioni semplici
+    nav_button("👤 Profilo Studenti", "Profilo Studenti")
+    nav_button("📈 Percorso Accademico", "Percorso Accademico")
+    nav_button("🔤 Varianti del Corso", "Varianti del Corso")
+    nav_button("🔬 Analisi Avanzata", "Analisi Avanzata")
+    nav_button("📋 Sintesi", "Sintesi")
+
+    st.markdown("---")
+    st.markdown("""
+    <div style='font-size:0.72rem; color:#48484A; line-height:1.6;'>
+        Fonti: MUR-USTAT, ANVUR,<br>AlmaLaurea · Dati 2010–2025
+    </div>
+    """, unsafe_allow_html=True)
+
+# Leggi sezione e sottosezione dal session state
+sezione = st.session_state.sezione
+sottosezione = st.session_state.sottosezione
     )
 
     st.markdown("---")
