@@ -1197,7 +1197,7 @@ elif sezione == "Percorso Accademico":
 elif sezione == "Avvii di Carriera":
     st.markdown("## Avvii di Carriera")
     st.markdown("---")
-avvi_naz = df_avvi.groupby('Anno accademico')['Numeratore'].sum().reset_index()
+    avvi_naz = df_avvi.groupby('Anno accademico')['Numeratore'].sum().reset_index()
     avvi_naz.columns = ['anno', 'avvii']
     media_avvi = avvi_naz['avvii'].mean()
     colori_avvi = ['#3B82F6' if a != avvi_naz['anno'].max() else '#60A5FA' for a in avvi_naz['anno']]
