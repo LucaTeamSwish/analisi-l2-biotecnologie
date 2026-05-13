@@ -466,7 +466,7 @@ with st.sidebar:
         options=[
             "Panoramica",
             "Iscritti",
-            "Geografia",
+            "Geografia (Immatricolati)",
             "Profilo Studenti",
             "Percorso Accademico",
             "Avvii di Carriera",
