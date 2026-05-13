@@ -547,8 +547,8 @@ if sezione == "Panoramica":
 
 # ─────────────────────────────────────────────
 # SEZIONE: ISCRITTI (ex Domanda Nazionale)
-# ─────────────────────────────────────────────
-    elif sezione == "Iscritti":
+# ────────────────────────────────────────────
+elif sezione == "Iscritti":
     st.markdown("## Iscritti")
     st.markdown("---")
     isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
