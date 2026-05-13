@@ -495,7 +495,7 @@ if sezione == "Panoramica":
     <p>
     Questa analisi documenta il panorama nazionale del Corso di Laurea in Biotecnologie (Classe L-2)
     attraverso dati ufficiali MUR-USTAT, ANVUR e AlmaLaurea. I dati coprono il periodo 2010–2025
-    e includono immatricolati, laureati, distribuzione geografica, profilo degli studenti e indicatori
+    e includono immatricolati, laureati, avvii di carriera al primo anno, distribuzione geografica, profilo degli studenti e indicatori
     di qualità della didattica.
     </p>
     """, unsafe_allow_html=True)
