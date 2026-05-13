@@ -453,7 +453,7 @@ with st.sidebar:
         <div style='font-size:1.1rem; font-weight:600; color:#F5F5F7; letter-spacing:-0.02em;'>
             L-2 Biotecnologie
         </div>
-        <div style='font-size:0.75rem; color:#48484A; margin-top:0.25rem; font-weight:400;'>
+        <div style='font-size:0.75rem; color:#C8C8C8; margin-top:0.25rem; font-weight:400;'>
             Analisi Nazionale
         </div>
     </div>
@@ -516,7 +516,7 @@ if sezione == "Panoramica":
             <div class="section-card" style="border-top: 3px solid {k['color']}; padding: 1.25rem;">
                 <div style="font-size:0.75rem; color:#86868B; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">{k['label']}</div>
                 <div style="font-size:2rem; font-weight:700; color:{k['color']}; letter-spacing:-0.03em;">{k['value']}</div>
-                <div style="font-size:0.78rem; color:#48484A; margin-top:0.25rem;">{k['delta']}</div>
+                <div style="font-size:0.78rem; color:#C8C8C8; margin-top:0.25rem;">{k['delta']}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1871,6 +1871,6 @@ elif sezione == "Sintesi":
     st.markdown("""
     <div class="section-card" style="border-top: 3px solid #3B82F6;">
     <p><b style="color:#F5F5F7">Il sistema L-2 Biotecnologie</b> presenta caratteristiche di solidità strutturale: domanda stabile, elevata soddisfazione, quasi assenza di abbandono definitivo e fortissima propensione alla prosecuzione magistrale.</p>
-    <p style="color:#48484A; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Elaborazione: Ufficio Analisi Istituzionale</p>
+    <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Elaborazione: Ufficio Analisi Istituzionale</p>
     </div>
     """, unsafe_allow_html=True)
