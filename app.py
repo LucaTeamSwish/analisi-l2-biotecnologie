@@ -479,7 +479,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("""
-    <div style='font-size:0.72rem; color:#48484A; line-height:1.6;'>
+    <div style='font-size:0.72rem; color:#6B7FA8; line-height:1.6;'>
         Fonti: MUR-USTAT, ANVUR,<br>AlmaLaurea · Dati 2010–2025
     </div>
     """, unsafe_allow_html=True)
