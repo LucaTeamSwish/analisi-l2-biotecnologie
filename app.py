@@ -1248,6 +1248,14 @@ elif sezione == "Avvii di Carriera":
                           title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')),
                           range=[0, avvi_naz['avvii'].max() * 1.2])
     st.plotly_chart(fig_avvi, use_container_width=True)
+    # G14 — Avvii di carriera bar chart
+    chart_header(
+        "Avvii di Carriera al Primo Anno — L-2 Biotecnologie",
+        "Numero totale nazionale di avvii di carriera al primo anno per anno accademico. "
+        "Le variazioni percentuali rispetto all'anno precedente sono indicate all'interno delle barre. "
+        "Il 2025 è evidenziato in azzurro chiaro.",
+        "Passa il cursore sulle barre per vedere il valore esatto."
+    )
     # G17 — Mappa avvii
     chart_header(
         "Avvii di carriera L-2 per regione",
