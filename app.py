@@ -606,8 +606,8 @@ elif sezione == "Iscritti":
         **PLOT_LAYOUT, title='',
         margin=dict(t=80, b=60, l=60, r=30), height=500,
     )
-    fig1.update_xaxes(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig1.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero')
+    fig1.update_xaxes(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig1.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
     st.plotly_chart(fig1, use_container_width=True)
 
     st.markdown("---")
@@ -637,8 +637,8 @@ elif sezione == "Iscritti":
         **PLOT_LAYOUT, title='', showlegend=False,
         margin=dict(t=80, b=60, l=60, r=30), height=500,
     )
-    fig2.update_xaxes(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), tickmode='linear', dtick=1, linecolor='#374151')
-    fig2.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), rangemode='tozero', linecolor='#374151')
+    fig2.update_xaxes(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), tickmode='linear', dtick=1, linecolor='#C8C8C8')
+    fig2.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), rangemode='tozero', linecolor='#C8C8C8')
     st.plotly_chart(fig2, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -689,7 +689,7 @@ elif sezione == "Geografia":
         fig3.add_trace(go.Choropleth(
             geojson=GEOJSON_URL, locations=GRIGIO_SCURO,
             featureidkey='properties.reg_name', z=[0, 0],
-            colorscale=[[0,'#374151'],[1,'#374151']], showscale=False,
+            colorscale=[[0,'#C8C8C8'],[1,'#C8C8C8']], showscale=False,
             marker_line_color='#0F172A', marker_line_width=1.5,
             hovertemplate='<b>%{location}</b><br>Nessun corso L-2 attivo<extra></extra>',
             visible=(i == 0), showlegend=False,
@@ -783,8 +783,8 @@ elif sezione == "Geografia":
         legend=dict(title=dict(text='Macro area', font=dict(color='#9CA3AF')), font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.75, y=0.05),
         margin=dict(t=120, b=60, l=180, r=80), height=560, barmode='overlay'
     )
-    fig4.update_xaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig4.update_yaxes(showgrid=False, tickfont=dict(size=12, color='#D1D5DB'), linecolor='#374151')
+    fig4.update_xaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig4.update_yaxes(showgrid=False, tickfont=dict(size=12, color='#D1D5DB'), linecolor='#C8C8C8')
     st.plotly_chart(fig4, use_container_width=True)
 
     st.markdown("---")
@@ -825,8 +825,8 @@ elif sezione == "Geografia":
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.99),
         height=520, margin=dict(t=80, b=80, l=60, r=30),
     )
-    fig10.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig10.update_yaxes(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151', range=[0, 70])
+    fig10.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig10.update_yaxes(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', range=[0, 70])
     st.plotly_chart(fig10, use_container_width=True)
 
     st.markdown("---")
@@ -878,8 +878,8 @@ elif sezione == "Geografia":
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.99),
         height=500, margin=dict(t=80, b=80, l=60, r=180),
     )
-    fig9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig9.update_yaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero')
+    fig9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig9.update_yaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
     st.plotly_chart(fig9, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -927,7 +927,7 @@ elif sezione == "Profilo Studenti":
                 title={'text': f"<b style='color:#D1D5DB'>{titolo}</b><br><span style='font-size:11px;color:#6B7280'>2025 vs {anno_ref}</span>"},
                 gauge={
                     'axis': {'range': [0, 100], 'ticksuffix': '%',
-                             'tickfont': {'color': '#6B7280'}, 'tickcolor': '#374151'},
+                             'tickfont': {'color': '#6B7280'}, 'tickcolor': '#C8C8C8'},
                     'bar': {'color': colore, 'thickness': 0.25},
                     'bgcolor': '#1F2937',
                     'borderwidth': 0,
@@ -1017,7 +1017,7 @@ elif sezione == "Profilo Studenti":
         'pct_stesso_ateneo_magistrale': ('Stesso ateneo', '#3B82F6'),
         'pct_magistrale_nord':          ('Altro Nord', '#818CF8'),
         'pct_magistrale_centro':        ('Centro Italia', '#F59E0B'),
-        'pct_altro':                    ('Estero / Altro', '#374151'),
+        'pct_altro':                    ('Estero / Altro', '#C8C8C8'),
     }
 
     fig6 = go.Figure()
@@ -1040,8 +1040,8 @@ elif sezione == "Profilo Studenti":
         ],
         height=540, margin=dict(t=80, b=100, l=60, r=30),
     )
-    fig6.update_xaxes(title=dict(text='Anno di laurea', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig6.update_yaxes(title=dict(text='%', font=dict(color='#9CA3AF')), range=[0, 100], ticksuffix='%', gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig6.update_xaxes(title=dict(text='Anno di laurea', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig6.update_yaxes(title=dict(text='%', font=dict(color='#9CA3AF')), range=[0, 100], ticksuffix='%', gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
     st.plotly_chart(fig6, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -1187,8 +1187,8 @@ elif sezione == "Percorso Accademico":
             xanchor='right', align='right'
         )]
     )
-    fig_lau.update_xaxes(showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151', ticksuffix='%', range=[0, 100])
-    fig_lau.update_yaxes(tickfont=dict(color='#9CA3AF', size=13), linecolor='#374151')
+    fig_lau.update_xaxes(showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', ticksuffix='%', range=[0, 100])
+    fig_lau.update_yaxes(tickfont=dict(color='#9CA3AF', size=13), linecolor='#C8C8C8')
     st.plotly_chart(fig_lau, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -1252,8 +1252,8 @@ elif sezione == "Avvii di Carriera":
             showarrow=False, font=dict(size=10, color='#6B7280'), xanchor='right', align='right'
         )]
     )
-    fig_avvi.update_xaxes(showgrid=False, tickfont=dict(color='#9CA3AF', size=13), linecolor='#374151', tickmode='linear', dtick=1)
-    fig_avvi.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero',
+    fig_avvi.update_xaxes(showgrid=False, tickfont=dict(color='#9CA3AF', size=13), linecolor='#C8C8C8', tickmode='linear', dtick=1)
+    fig_avvi.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero',
                           title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')),
                           range=[0, avvi_naz['avvii'].max() * 1.2])
     st.plotly_chart(fig_avvi, use_container_width=True)
@@ -1309,7 +1309,7 @@ elif sezione == "Avvii di Carriera":
         fig_avvi_map.add_trace(go.Choropleth(
             geojson=GEOJSON_URL, locations=GRIGIO_SCURO,
             featureidkey='properties.reg_name', z=[0, 0],
-            colorscale=[[0,'#374151'],[1,'#374151']], showscale=False,
+            colorscale=[[0,'#C8C8C8'],[1,'#C8C8C8']], showscale=False,
             marker_line_color='#0F172A', marker_line_width=1.5,
             hovertemplate='<b>%{location}</b><br>Nessun corso L-2 attivo<extra></extra>',
             visible=(i == 0), showlegend=False,
@@ -1406,8 +1406,8 @@ elif sezione == "Avvii di Carriera":
         legend=dict(title=dict(text='Macro area', font=dict(color='#9CA3AF')), font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.75, y=0.05),
         margin=dict(t=120, b=60, l=200, r=80), height=560, barmode='overlay'
     )
-    fig_avvi4.update_xaxes(title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig_avvi4.update_yaxes(showgrid=False, tickfont=dict(size=12, color='#D1D5DB'), linecolor='#374151')
+    fig_avvi4.update_xaxes(title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig_avvi4.update_yaxes(showgrid=False, tickfont=dict(size=12, color='#D1D5DB'), linecolor='#C8C8C8')
     st.plotly_chart(fig_avvi4, use_container_width=True)
 
     st.markdown("---")
@@ -1468,8 +1468,8 @@ elif sezione == "Avvii di Carriera":
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.99, y=0.99, xanchor='right', yanchor='top'),
         height=650, margin=dict(t=80, b=80, l=60, r=200),
     )
-    fig_avvi9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig_avvi9.update_yaxes(title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151', rangemode='tozero')
+    fig_avvi9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig_avvi9.update_yaxes(title=dict(text='N° avvii di carriera', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
     st.plotly_chart(fig_avvi9, use_container_width=True)
 
     st.markdown("---")
@@ -1510,8 +1510,8 @@ elif sezione == "Avvii di Carriera":
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.99),
         height=520, margin=dict(t=80, b=80, l=60, r=30),
     )
-    fig_avvi10.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig_avvi10.update_yaxes(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151', range=[0, 70])
+    fig_avvi10.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig_avvi10.update_yaxes(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', range=[0, 70])
     st.plotly_chart(fig_avvi10, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -1623,8 +1623,8 @@ elif sezione == "Varianti del Corso":
         ],
         height=580, margin=dict(t=80, b=80, l=300, r=120),
     )
-    fig12.update_xaxes(title=dict(text='% prosecuzione al II anno', font=dict(color='#9CA3AF')), showgrid=False, ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151', range=[0, 110])
-    fig12.update_yaxes(showgrid=False, tickfont=dict(size=10, color='#D1D5DB'), linecolor='#374151')
+    fig12.update_xaxes(title=dict(text='% prosecuzione al II anno', font=dict(color='#9CA3AF')), showgrid=False, ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', range=[0, 110])
+    fig12.update_yaxes(showgrid=False, tickfont=dict(size=10, color='#D1D5DB'), linecolor='#C8C8C8')
     st.plotly_chart(fig12, use_container_width=True)
 
 # ─────────────────────────────────────────────
@@ -1770,14 +1770,14 @@ elif sezione == "Analisi Avanzata":
             dict(x=0.98, y=0.98, xref='paper', yref='paper',
                  text=f'r = {r:.3f} · p = {p:.3f} · n = {len(df_plot_c)}',
                  showarrow=False, font=dict(size=12, color='#9CA3AF'),
-                 align='right', xanchor='right', bgcolor='#1F2937', bordercolor='#374151', borderwidth=1),
+                 align='right', xanchor='right', bgcolor='#1F2937', bordercolor='#C8C8C8', borderwidth=1),
             fonte_annotation('Fonte: ANVUR iC00b + iC14 · Ogni punto = un corso presso un ateneo')
         ],
         legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.01),
         height=540, margin=dict(t=80, b=80, l=70, r=30),
     )
-    fig_corr.update_xaxes(title=dict(text='Immatricolati medi per anno (2020–2023)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
-    fig_corr.update_yaxes(title=dict(text='Tasso prosecuzione al II anno (%)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#374151')
+    fig_corr.update_xaxes(title=dict(text='Immatricolati medi per anno (2020–2023)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
+    fig_corr.update_yaxes(title=dict(text='Tasso prosecuzione al II anno (%)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
     st.plotly_chart(fig_corr, use_container_width=True)
 
 # ─────────────────────────────────────────────
