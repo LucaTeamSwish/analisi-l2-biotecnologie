@@ -1194,7 +1194,11 @@ elif sezione == "Percorso Accademico":
 # ─────────────────────────────────────────────
 # SEZIONE: AVVII DI CARRIERA
 # ─────────────────────────────────────────────
-# G14 — Avvii di carriera bar chart
+elif sezione == "Avvii di Carriera":
+    st.markdown("## Avvii di Carriera")
+    st.markdown("---")
+
+    # G14 — Avvii di carriera bar chart
     chart_header(
         "Avvii di Carriera al Primo Anno — L-2 Biotecnologie",
         "Numero totale nazionale di avvii di carriera al primo anno per anno accademico. "
@@ -1202,12 +1206,6 @@ elif sezione == "Percorso Accademico":
         "Il 2025 è evidenziato in azzurro chiaro.",
         "Passa il cursore sulle barre per vedere il valore esatto."
     )
-
-
-
-elif sezione == "Avvii di Carriera":
-    st.markdown("## Avvii di Carriera")
-    st.markdown("---")
     avvi_naz = df_avvi.groupby('Anno accademico')['Numeratore'].sum().reset_index()
     avvi_naz.columns = ['anno', 'avvii']
     media_avvi = avvi_naz['avvii'].mean()
