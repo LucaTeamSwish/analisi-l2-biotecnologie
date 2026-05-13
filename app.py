@@ -410,7 +410,7 @@ def load_data():
     df_avvi['ateneo_short'] = df_avvi['Ateneo']
 
     return (imm_l2, anno1_l2, lau_l2, corso_l2, lau_naz, imm_naz,
-            alma_profilo, df_anvur, df_ava2, df_avvi, df_lau_corso, df_ic16, df_ic14_ic21)
+            alma_profilo, df_anvur, df_ava2, df_avvi, df_lau_corso, df_ic16)
 
 with st.spinner("Caricamento dati in corso..."):
     (imm_l2, anno1_l2, lau_l2, corso_l2, lau_naz, imm_naz,
