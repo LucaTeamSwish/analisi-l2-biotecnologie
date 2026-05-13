@@ -548,13 +548,13 @@ if sezione == "Panoramica":
 # ─────────────────────────────────────────────
 # SEZIONE: ISCRITTI (ex Domanda Nazionale)
 # ─────────────────────────────────────────────
-elif sezione == "Iscritti":
+    elif sezione == "Iscritti":
     st.markdown("## Iscritti")
     st.markdown("---")
     isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
     isc_naz = isc_naz[isc_naz['AnnoA'].str[:4].astype(int) >= 2020].copy()
     isc_naz['anno_short'] = isc_naz['AnnoA'].str[:4] + '/' + isc_naz['AnnoA'].str[7:9]
-chart_header(
+    chart_header(
         "Iscritti L-2 Biotecnologie — Italia (2020–2025)",
         "Numero totale di studenti iscritti a corsi L-2 Biotecnologie in Italia per anno accademico.",
         "Passa il cursore sui pallini per vedere il valore esatto."
