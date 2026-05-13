@@ -551,7 +551,9 @@ if sezione == "Panoramica":
 elif sezione == "Iscritti":
     st.markdown("## Iscritti")
     st.markdown("---")
-
+isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
+    isc_naz = isc_naz[isc_naz['AnnoA'].str[:4].astype(int) >= 2020].copy()
+    isc_naz['anno_short'] = isc_naz['AnnoA'].str[:4] + '/' + isc_naz['AnnoA'].str[7:9]
     # G1 — Immatricolati
     chart_header(
         "Immatricolati puri L-2 — Italia (2010–2025)",
