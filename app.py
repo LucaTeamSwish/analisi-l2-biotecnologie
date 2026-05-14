@@ -292,7 +292,7 @@ if sezione == "Panoramica":
     profilo degli studenti e indicatori di qualità della didattica.</p>""", unsafe_allow_html=True)
     st.markdown("### Indicatori chiave")
     kpi = [
-        {'label': 'Immatricolati puri 2024/25', 'value': '7.076', 'delta': '↑ stabile', 'color': '#3B82F6'},
+        {'label': 'Avvii di carriera 2025', 'value': '7.228', 'delta': '↑ stabile', 'color': '#3B82F6'}, 
         {'label': 'Atenei attivi L-2', 'value': '43', 'delta': 'nessun telematico', 'color': '#34D399'},
         {'label': 'Soddisfatti del corso', 'value': '90.8%', 'delta': 'AlmaLaurea 2025', 'color': '#F59E0B'},
         {'label': 'Prosegue magistrale', 'value': '88.7%', 'delta': 'AlmaLaurea 2025', 'color': '#818CF8'},
