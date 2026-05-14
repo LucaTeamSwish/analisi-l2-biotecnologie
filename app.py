@@ -796,7 +796,7 @@ elif sezione == "Immatricolati":
     fig9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
     fig9.update_yaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
     st.plotly_chart(fig9, use_container_width=True)
-  chart_header("Distribuzione immatricolati per variante di denominazione L-2",
+    chart_header("Distribuzione immatricolati per variante di denominazione L-2",
         "Il treemap mostra le varianti di denominazione dei corsi L-2 in Italia, con dimensione proporzionale al numero di immatricolati e colore che indica il numero di atenei che offrono ciascuna variante.",
         "Seleziona l'anno con i pulsanti. Passa il cursore sui rettangoli per vedere immatricolati e numero di atenei.")
     df_var = df_anvur[df_anvur['Anno accademico']>=2020].copy()
