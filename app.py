@@ -243,8 +243,9 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     st.markdown('<div class="sidebar-title">Sezioni</div>', unsafe_allow_html=True)
     sezione = st.radio(label="", options=[
-        "Panoramica", "Iscritti", "Profilo Studenti", "Percorso Accademico",
-        "Varianti del Corso", "Analisi Avanzata", "Sintesi",
+        "Panoramica", "Avvii di Carriera",
+        "Profilo Studenti", "Percorso Accademico",
+        "Varianti del Corso", "Analisi Avanzata", "Sintesi", "Iscritti",
     ], label_visibility="collapsed")
     st.markdown("---")
     st.markdown("""<div style='font-size:0.72rem; color:#6B7FA8; line-height:1.6;'>
@@ -277,8 +278,9 @@ if sezione == "Panoramica":
     st.markdown("---")
     st.markdown("### Struttura dell'analisi")
     sezioni_info = [
-        ("Iscritti", "Totale iscritti e analisi completa degli avvii di carriera al primo anno per ateneo e regione.", "#3B82F6"),
-        ("Immatricolati", "Trend immatricolati puri, distribuzione geografica e focus sul Lazio.", "#10B981"),
+        ("Avvii di Carriera", "Trend avvii di carriera al primo anno, distribuzione geografica, top atenei e focus sul Lazio.", "#3B82F6"),
+        
+        ("Iscritti", "Totale iscritti L-2 per anno accademico.", "#10B981"),
         ("Profilo Studenti", "Soddisfazione, riiscrizione e destinazione alla magistrale.", "#34D399"),
         ("Percorso Accademico", "Laureati, laureati in corso e tasso di prosecuzione al II anno.", "#EF4444"),
         ("Varianti del Corso", "Distribuzione delle varianti di denominazione L-2.", "#818CF8"),
@@ -538,198 +540,6 @@ elif sezione == "Avvii di Carriera":
     fig_avvi10.update_yaxes(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', range=[0, 70])
     st.plotly_chart(fig_avvi10, use_container_width=True)
 
-
-# ─── IMMATRICOLATI ────────────────────────────────────────────────────────────
-elif sezione == "Immatricolati":
-    st.markdown("## Immatricolati")
-    st.markdown("---")
-
-    # G1 — Trend immatricolati
-    chart_header("Immatricolati puri L-2 — Italia (2010–2025)",
-        "Il grafico riporta il numero di studenti che si iscrivono per la prima volta a un corso L-2 Biotecnologie in Italia, per anno accademico. Gli immatricolati puri escludono i trasferimenti e i passaggi di corso. Nessun ateneo telematico offre L-2.",
-        "Passa il cursore sui punti per vedere il valore e la variazione percentuale rispetto all'anno precedente.")
-    y_2019 = imm_naz[imm_naz['anno_short']=='2019/20']['Imm'].values[0]
-    y_2020 = imm_naz[imm_naz['anno_short']=='2020/21']['Imm'].values[0]
-    fig1 = go.Figure()
-    fig1.add_trace(go.Scatter(x=imm_naz['anno_short'], y=imm_naz['Imm'], mode='none', fill='tozeroy',
-        fillcolor='rgba(59,130,246,0.08)', showlegend=False, hoverinfo='skip'))
-    fig1.add_trace(go.Scatter(x=['2019/20','2020/21','2020/21','2019/20'], y=[y_2019,y_2020,0,0],
-        fill='toself', fillcolor='rgba(239,68,68,0.12)', line=dict(color='rgba(0,0,0,0)'), showlegend=False, hoverinfo='skip'))
-    fig1.add_trace(go.Scatter(x=imm_naz['anno_short'], y=imm_naz['Imm'], mode='lines+markers',
-        line=dict(color='#60A5FA', width=2.5), marker=dict(size=7, color='#60A5FA', line=dict(color='#1E3A5F', width=1.5)),
-        customdata=imm_naz[['delta']].round(1),
-        hovertemplate='<b>%{x}</b><br>Immatricolati: <b>%{y:,}</b><br>Variazione: %{customdata[0]:+.1f}%<extra></extra>', showlegend=False))
-    idx_max = imm_naz['Imm'].idxmax()
-    fig1.add_annotation(x=imm_naz.loc[idx_max,'anno_short'], y=imm_naz.loc[idx_max,'Imm'],
-        text=f"Picco: {imm_naz.loc[idx_max,'Imm']:,}", showarrow=True, arrowhead=2, arrowcolor='#60A5FA',
-        font=dict(size=11, color='#60A5FA'), bgcolor='#1E3A5F', bordercolor='#60A5FA', borderwidth=1, ay=-40)
-    fig1.add_annotation(fonte_annotation('Fonte: MUR-USTAT · Immatricolati puri L-2'))
-    fig1.add_annotation(x='2019/20', y=400, text='Periodo COVID', showarrow=False, font=dict(size=10, color='#F87171'), xanchor='left', xshift=6)
-    fig1.update_layout(**PLOT_LAYOUT, title='', margin=dict(t=80, b=60, l=60, r=30), height=500)
-    fig1.update_xaxes(tickangle=-45, showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
-    fig1.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
-    st.plotly_chart(fig1, use_container_width=True)
-    st.markdown("---")
-
-    # G3 — Mappa immatricolati
-    chart_header("Immatricolati puri L-2 per regione",
-        "La mappa mostra la distribuzione degli immatricolati puri per regione, dal 2020 al 2025. Le regioni in grigio scuro non ospitano atenei con corsi L-2 attivi.",
-        "Seleziona l'anno con i pulsanti. Passa il cursore sulla regione per vedere il dettaglio.")
-    anno1_fil = df_anvur[(df_anvur['Anno accademico']>=2020) & (df_anvur['regione'].notna())].copy()
-    df_mappa = anno1_fil.groupby(['Anno accademico','regione'])['imm'].sum().reset_index().rename(columns={'imm':'immatricolati'})
-    df_hover_m = anno1_fil.groupby(['Anno accademico','regione','ateneo_short','corso_nome'])['imm'].sum().reset_index()
-    def crea_hover_m(regione, anno):
-        subset = df_hover_m[(df_hover_m['regione']==regione)&(df_hover_m['Anno accademico']==anno)].sort_values('imm', ascending=False)
-        totale = int(subset['imm'].sum())
-        testo = f"<b>{regione}</b><br>Anno: {anno}<br>Immatricolati puri: <b>{totale:,}</b><br><br>"
-        for _, row in subset.iterrows():
-            testo += f"<b>{row['ateneo_short']}</b><br>&nbsp;&nbsp;{row['corso_nome']}: {int(row['imm']):,}<br>"
-        return testo
-    df_mappa['hover'] = df_mappa.apply(lambda r: crea_hover_m(r['regione'], r['Anno accademico']), axis=1)
-    anni_mappa = sorted(df_mappa['Anno accademico'].unique())
-    fig3 = go.Figure()
-    for i, anno in enumerate(anni_mappa):
-        subset = df_mappa[df_mappa['Anno accademico']==anno]
-        fig3.add_trace(go.Choropleth(geojson=GEOJSON_URL, locations=subset['regione'],
-            featureidkey='properties.reg_name', z=subset['immatricolati'],
-            colorscale=[[0,'#1E3A5F'],[0.3,'#2563EB'],[0.6,'#60A5FA'],[1,'#BAE6FD']],
-            zmin=df_mappa['immatricolati'].min(), zmax=df_mappa['immatricolati'].max(),
-            colorbar=dict(title=dict(text='Immatricolati<br>puri', font=dict(color='#9CA3AF')), tickfont=dict(color='#9CA3AF'), x=1.0, thickness=15),
-            marker_line_color='#0F172A', marker_line_width=1.5,
-            text=subset['hover'], hovertemplate='%{text}<extra></extra>', name=str(anno), visible=(i==0)))
-        fig3.add_trace(go.Choropleth(geojson=GEOJSON_URL, locations=GRIGIO_SCURO,
-            featureidkey='properties.reg_name', z=[0,0], colorscale=[[0,'#C8C8C8'],[1,'#C8C8C8']], showscale=False,
-            marker_line_color='#0F172A', marker_line_width=1.5,
-            hovertemplate='<b>%{location}</b><br>Nessun corso L-2 attivo<extra></extra>', visible=(i==0), showlegend=False))
-    n_layers = len(fig3.data) // len(anni_mappa)
-    buttons_m = []
-    for i, anno in enumerate(anni_mappa):
-        vis = []
-        for j in range(len(anni_mappa)):
-            for _ in range(n_layers): vis.append(j==i)
-        buttons_m.append(dict(label=str(anno), method='update',
-            args=[{'visible': vis}, {'title': dict(text=f'Immatricolati puri L-2 per Regione — {anno}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
-    fig3.update_layout(
-        title=dict(text=f'Immatricolati puri L-2 per Regione — {anni_mappa[0]}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
-        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.08, yanchor='top',
-            buttons=buttons_m, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
-            font=dict(size=12, family='Inter', color='white'), active=0, pad=dict(r=6,l=6,t=6,b=6))],
-        annotations=[
-            dict(x=0.01, y=-0.02, xref='paper', yref='paper', text="Grigio scuro: Molise e Valle d'Aosta — nessun corso L-2 attivo",
-                 showarrow=False, font=dict(size=10, color='#7A9CC0'), align='left'),
-            fonte_annotation('Fonte: ANVUR Cruscotto')],
-        margin=dict(r=20, t=110, l=0, b=40), height=650,
-        font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER, geo=dict(bgcolor=BG_PAPER))
-    fig3.update_geos(fitbounds='locations', visible=False)
-    st.plotly_chart(fig3, use_container_width=True)
-    st.markdown("---")
-
-    # G4 — Top 15 atenei
-    chart_header("Top 15 atenei per immatricolati puri",
-        "I 15 atenei con il maggior numero di immatricolati puri L-2 per anno accademico.",
-        "Seleziona l'anno con i pulsanti. Passa il cursore sulle barre per il dettaglio per corso.")
-    g4_anvur = df_anvur[df_anvur['Anno accademico']>=2020].groupby(['Anno accademico','ateneo_short','regione'])['imm'].sum().reset_index()
-    g4_anvur['macro'] = g4_anvur['regione'].map({'Piemonte':'Nord','Lombardia':'Nord','Veneto':'Nord','Friuli-Venezia Giulia':'Nord','Liguria':'Nord','Emilia-Romagna':'Nord','Trentino-Alto Adige/Südtirol':'Nord','Toscana':'Centro','Umbria':'Centro','Marche':'Centro','Lazio':'Centro','Abruzzo':'Centro','Campania':'Sud','Puglia':'Sud','Basilicata':'Sud','Calabria':'Sud','Molise':'Sud','Sicilia':'Isole','Sardegna':'Isole'})
-    g4_corsi = df_anvur[df_anvur['Anno accademico']>=2020].groupby(['Anno accademico','ateneo_short'])['corso_nome'].nunique().reset_index().rename(columns={'corso_nome':'n_corsi'})
-    g4_nomi = df_anvur[df_anvur['Anno accademico']>=2020].groupby(['Anno accademico','ateneo_short','corso_nome'])['imm'].sum().reset_index().groupby(['Anno accademico','ateneo_short']).apply(
-        lambda x: '<br>'.join([f"&nbsp;&nbsp;• {row['corso_nome']}: <b>{int(row['imm']):,}</b>" for _, row in x.sort_values('imm', ascending=False).iterrows()])
-    ).reset_index().rename(columns={0:'lista_corsi'})
-    g4_anvur = g4_anvur.merge(g4_corsi, on=['Anno accademico','ateneo_short'], how='left')
-    g4_anvur = g4_anvur.merge(g4_nomi, on=['Anno accademico','ateneo_short'], how='left')
-    anni_g4 = sorted(g4_anvur['Anno accademico'].unique())
-    fig4 = go.Figure()
-    for i, anno in enumerate(anni_g4):
-        subset = g4_anvur[g4_anvur['Anno accademico']==anno].sort_values('imm', ascending=False).head(15).sort_values('imm', ascending=True).reset_index(drop=True)
-        fig4.add_trace(go.Bar(x=subset['imm'], y=subset['ateneo_short'], orientation='h',
-            marker=dict(color=[COLORI_MACRO.get(m,'#6B7280') for m in subset['macro']], line=dict(width=0), opacity=0.9),
-            text=subset['imm'].astype(int).apply(lambda x: f'{x:,}'), textposition='outside', textfont=dict(size=11, color='#9CA3AF'),
-            customdata=subset[['macro','n_corsi','lista_corsi']],
-            hovertemplate='<b>%{y}</b><br>Immatricolati puri: <b>%{x:,}</b><br>Macro area: %{customdata[0]}<br>N° corsi L-2: <b>%{customdata[1]}</b><br>%{customdata[2]}<extra></extra>',
-            visible=(i==0), showlegend=False))
-    for macro, colore in COLORI_MACRO.items():
-        fig4.add_trace(go.Bar(x=[None], y=[None], orientation='h', marker_color=colore, name=macro, visible=True))
-    buttons_g4 = []
-    for i, anno in enumerate(anni_g4):
-        vis = [j==i for j in range(len(anni_g4))] + [True]*len(COLORI_MACRO)
-        buttons_g4.append(dict(label=str(anno), method='update',
-            args=[{'visible': vis}, {'title': dict(text=f'Top 15 atenei L-2 — {anno}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
-    fig4.update_layout(**PLOT_LAYOUT, title='',
-        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.10, yanchor='top',
-            buttons=buttons_g4, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
-            font=dict(size=12, family='Inter', color='white'), active=len(anni_g4)-1, pad=dict(r=6,l=6,t=6,b=6))],
-        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto — Immatricolati puri per ateneo')],
-        legend=dict(title=dict(text='Macro area', font=dict(color='#9CA3AF')), font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.75, y=0.05),
-        margin=dict(t=120, b=60, l=180, r=80), height=560, barmode='overlay')
-    fig4.update_xaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
-    fig4.update_yaxes(showgrid=False, tickfont=dict(size=12, color='#D1D5DB'), linecolor='#C8C8C8')
-    st.plotly_chart(fig4, use_container_width=True)
-    st.markdown("---")
-
-    # G10 — Bubble quota macro
-    chart_header("Quota immatricolati per macro area — trend 2020–2025",
-        "Ogni bolla rappresenta la quota percentuale di immatricolati di una macro area. La dimensione della bolla è proporzionale al numero assoluto di immatricolati.",
-        "Passa il cursore sulle bolle per vedere la quota e il numero assoluto.")
-    macro_trend = df_anvur[df_anvur['Anno accademico']>=2020].groupby(['Anno accademico','macro'])['imm'].sum().reset_index().dropna(subset=['macro'])
-    totale_anno = macro_trend.groupby('Anno accademico')['imm'].sum().reset_index()
-    totale_anno.columns = ['Anno accademico','totale']
-    macro_pct = macro_trend.merge(totale_anno, on='Anno accademico')
-    macro_pct['pct'] = (macro_pct['imm'] / macro_pct['totale'] * 100).round(1)
-    OFFSET = {'Nord': 2, 'Centro': 1, 'Sud': -1, 'Isole': -2}
-    fig10 = go.Figure()
-    for macro in ['Nord','Centro','Sud','Isole']:
-        subset = macro_pct[macro_pct['macro']==macro].sort_values('Anno accademico').copy()
-        subset['pct_offset'] = subset['pct'] + OFFSET.get(macro, 0)
-        fig10.add_trace(go.Scatter(x=subset['Anno accademico'].astype(str), y=subset['pct_offset'],
-            mode='markers+text', name=macro,
-            marker=dict(size=subset['imm']/macro_pct['imm'].max()*80+20, color=COLORI_MACRO[macro], opacity=0.85, line=dict(color='#0F172A', width=2)),
-            text=subset['pct'].apply(lambda x: f'{x:.1f}%'), textposition='middle center', textfont=dict(size=10, color='white', family='Inter'),
-            hovertemplate=f'<b>{macro}</b><br>Anno: %{{x}}<br>Quota: <b>%{{customdata[0]:.1f}}%</b><br>Immatricolati: <b>%{{customdata[1]:,}}</b><extra></extra>',
-            customdata=list(zip(subset['pct'], subset['imm'].astype(int)))))
-    fig10.update_layout(**PLOT_LAYOUT, title='',
-        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto — Dimensione bolla = immatricolati assoluti')],
-        legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.99),
-        height=520, margin=dict(t=80, b=80, l=60, r=30))
-    fig10.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
-    fig10.update_yaxes(title=dict(text='Quota (%)', font=dict(color='#9CA3AF')), gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', range=[0, 70])
-    st.plotly_chart(fig10, use_container_width=True)
-    st.markdown("---")
-
-    # G9 — Lazio immatricolati
-    chart_header("Immatricolati puri L-2 nel Lazio — per ateneo e corso",
-        "Andamento degli immatricolati puri nei tre atenei laziali: La Sapienza (3 corsi), Tor Vergata e Tuscia.",
-        "Passa il cursore sulle linee per vedere i valori anno per anno.")
-    lazio_detail = df_anvur[(df_anvur['regione']=='Lazio')&(df_anvur['Anno accademico']>=2020)].groupby(['Anno accademico','ateneo_short','corso_nome'])['imm'].sum().reset_index().sort_values('Anno accademico')
-    lazio_detail['label'] = lazio_detail.apply(lambda r: f"{r['ateneo_short']} — {r['corso_nome']}", axis=1)
-    ordine = lazio_detail.groupby('label')['imm'].sum().sort_values(ascending=False).index.tolist()
-    palette = {'La Sapienza': ['#F59E0B','#FCD34D','#F97316'], 'Tor Vergata': ['#3B82F6'], 'Tuscia': ['#34D399']}
-    colori_label = {}
-    contatori = {k: 0 for k in palette}
-    for label in ordine:
-        ateneo = label.split(' — ')[0]
-        idx = contatori.get(ateneo, 0)
-        colori_label[label] = palette.get(ateneo, ['#818CF8'])[idx % len(palette.get(ateneo, ['#818CF8']))]
-        contatori[ateneo] = idx + 1
-    fig9 = go.Figure()
-    for label in ordine:
-        df_lab = lazio_detail[lazio_detail['label']==label].sort_values('Anno accademico')
-        colore = colori_label[label]
-        ateneo = label.split(' — ')[0]
-        corso = label.split(' — ')[1]
-        dash = 'dot' if ateneo=='La Sapienza' and corso!='Biotecnologie' else 'solid'
-        fig9.add_trace(go.Scatter(x=df_lab['Anno accademico'].astype(str), y=df_lab['imm'],
-            mode='lines+markers', name=label, line=dict(color=colore, width=2.5, dash=dash),
-            marker=dict(size=8, color=colore, line=dict(color='#0F172A', width=1.5)),
-            hovertemplate=f'<b>{label}</b><br>Anno: %{{x}}<br>Immatricolati puri: <b>%{{y:,.0f}}</b><extra></extra>'))
-        ultimo = df_lab.iloc[-1]
-        fig9.add_annotation(x=str(int(ultimo['Anno accademico'])), y=ultimo['imm'],
-            text=f"<b>{int(ultimo['imm'])}</b>", showarrow=False, font=dict(size=10, color=colore), xanchor='left', xshift=8)
-    fig9.update_layout(**PLOT_LAYOUT, title='',
-        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto · Linee tratteggiate = corsi secondari La Sapienza')],
-        legend=dict(font=dict(color='#D1D5DB'), bgcolor='rgba(0,0,0,0)', x=0.01, y=0.99),
-        height=500, margin=dict(t=80, b=80, l=60, r=180))
-    fig9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
-    fig9.update_yaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
-    st.plotly_chart(fig9, use_container_width=True)
 
 
 # ─── PROFILO STUDENTI ─────────────────────────────────────────────────────────
