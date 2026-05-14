@@ -245,7 +245,7 @@ with st.sidebar:
     sezione = st.radio(label="", options=[
         "Panoramica", "Avvii di Carriera",
         "Profilo Studenti", "Percorso Accademico",
-        "Varianti del Corso", "Analisi Avanzata", "Sintesi", "Iscritti",
+        "Varianti del Corso", "Analisi Avanzata", "Sintesi",
     ], label_visibility="collapsed")
     st.markdown("---")
     st.markdown("""<div style='font-size:0.72rem; color:#6B7FA8; line-height:1.6;'>
@@ -280,7 +280,6 @@ if sezione == "Panoramica":
     sezioni_info = [
         ("Avvii di Carriera", "Trend avvii di carriera al primo anno, distribuzione geografica, top atenei e focus sul Lazio.", "#3B82F6"),
         
-        ("Iscritti", "Totale iscritti L-2 per anno accademico.", "#10B981"),
         ("Profilo Studenti", "Soddisfazione, riiscrizione e destinazione alla magistrale.", "#34D399"),
         ("Percorso Accademico", "Laureati, laureati in corso e tasso di prosecuzione al II anno.", "#EF4444"),
         ("Varianti del Corso", "Distribuzione delle varianti di denominazione L-2.", "#818CF8"),
@@ -541,6 +540,45 @@ elif sezione == "Avvii di Carriera":
     st.plotly_chart(fig_avvi10, use_container_width=True)
 
 
+
+    st.markdown("---")
+
+    # Iscritti L-2
+    chart_header("Iscritti L-2 Biotecnologie — Italia (2020–2025)",
+        "Numero totale di studenti iscritti a corsi L-2 Biotecnologie in Italia per anno accademico.",
+        "Passa il cursore sui pallini per vedere il valore esatto.")
+    isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
+    isc_naz = isc_naz[isc_naz['AnnoA'].str[:4].astype(int) >= 2020].copy()
+    isc_naz['anno_short'] = isc_naz['AnnoA'].str[:4] + '/' + isc_naz['AnnoA'].str[7:9]
+    chart_header("Iscritti L-2 Biotecnologie — Italia (2020–2025)",
+        "Numero totale di studenti iscritti a corsi L-2 Biotecnologie in Italia per anno accademico.",
+        "Passa il cursore sui pallini per vedere il valore esatto.")
+    fig_isc = go.Figure()
+    for _, row in isc_naz.iterrows():
+        fig_isc.add_shape(type='line', x0=row['anno_short'], x1=row['anno_short'],
+            y0=0, y1=row['Isc'], line=dict(color='#3B82F6', width=3))
+    fig_isc.add_trace(go.Scatter(x=isc_naz['anno_short'], y=isc_naz['Isc'], mode='markers+text',
+        marker=dict(size=20, color=['#60A5FA' if a == '2024/25' else '#3B82F6' for a in isc_naz['anno_short']], line=dict(color='white', width=2)),
+        text=isc_naz['Isc'].apply(lambda x: f'{x:,.0f}'), textposition='top center',
+        textfont=dict(color='#C8C8C8', size=12, family='Inter'),
+        hovertemplate='<b>%{x}</b><br>Iscritti: <b>%{y:,.0f}</b><extra></extra>', name='Iscritti L-2'))
+    fig_isc.add_hline(y=isc_naz['Isc'].mean(), line=dict(color='#F59E0B', width=2, dash='dash'),
+        annotation_text=f'Media: {isc_naz["Isc"].mean():,.0f}', annotation_position='right',
+        annotation_font=dict(color='#F59E0B', size=11))
+    fig_isc.add_trace(go.Scatter(x=[None], y=[None], mode='lines',
+        line=dict(color='#F59E0B', width=2, dash='dash'),
+        name=f'Media periodo: {isc_naz["Isc"].mean():,.0f}', showlegend=True))
+    fig_isc.update_layout(font=dict(family='Inter', size=12), plot_bgcolor=BG_PLOT, paper_bgcolor=BG_PAPER,
+        title=dict(text='Iscritti L-2 Biotecnologie — Italia (2020–2025)', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
+        showlegend=True, legend=dict(font=dict(color='#C8C8C8', size=11), bgcolor='rgba(0,0,0,0)', orientation='h', x=0.5, xanchor='center', y=1.08),
+        margin=dict(t=100, b=80, l=70, r=100), height=520,
+        annotations=[dict(x=0.99, y=-0.13, xref='paper', yref='paper',
+            text='Fonte: MUR-USTAT — Iscritti L-2 Biotecnologie per anno accademico',
+            showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right', align='right')])
+    fig_isc.update_xaxes(showgrid=False, tickfont=dict(color='#C8C8C8', size=13), linecolor='#374151')
+    fig_isc.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#C8C8C8'), linecolor='#374151', rangemode='tozero',
+        title=dict(text='N° iscritti', font=dict(color='#C8C8C8')), range=[0, isc_naz['Isc'].max() * 1.2])
+    st.plotly_chart(fig_isc, use_container_width=True)
 
 # ─── PROFILO STUDENTI ─────────────────────────────────────────────────────────
 elif sezione == "Profilo Studenti":
@@ -878,43 +916,6 @@ elif sezione == "Analisi Avanzata":
     fig_corr.update_yaxes(title=dict(text='Tasso prosecuzione al II anno (%)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
     st.plotly_chart(fig_corr, use_container_width=True)
 
-
-# ─── ISCRITTI ─────────────────────────────────────────────────────────────────
-elif sezione == "Iscritti":
-    st.markdown("## Iscritti")
-    st.markdown("---")
-    isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
-    isc_naz = isc_naz[isc_naz['AnnoA'].str[:4].astype(int) >= 2020].copy()
-    isc_naz['anno_short'] = isc_naz['AnnoA'].str[:4] + '/' + isc_naz['AnnoA'].str[7:9]
-    chart_header("Iscritti L-2 Biotecnologie — Italia (2020–2025)",
-        "Numero totale di studenti iscritti a corsi L-2 Biotecnologie in Italia per anno accademico.",
-        "Passa il cursore sui pallini per vedere il valore esatto.")
-    fig_isc = go.Figure()
-    for _, row in isc_naz.iterrows():
-        fig_isc.add_shape(type='line', x0=row['anno_short'], x1=row['anno_short'],
-            y0=0, y1=row['Isc'], line=dict(color='#3B82F6', width=3))
-    fig_isc.add_trace(go.Scatter(x=isc_naz['anno_short'], y=isc_naz['Isc'], mode='markers+text',
-        marker=dict(size=20, color=['#60A5FA' if a == '2024/25' else '#3B82F6' for a in isc_naz['anno_short']], line=dict(color='white', width=2)),
-        text=isc_naz['Isc'].apply(lambda x: f'{x:,.0f}'), textposition='top center',
-        textfont=dict(color='#C8C8C8', size=12, family='Inter'),
-        hovertemplate='<b>%{x}</b><br>Iscritti: <b>%{y:,.0f}</b><extra></extra>', name='Iscritti L-2'))
-    fig_isc.add_hline(y=isc_naz['Isc'].mean(), line=dict(color='#F59E0B', width=2, dash='dash'),
-        annotation_text=f'Media: {isc_naz["Isc"].mean():,.0f}', annotation_position='right',
-        annotation_font=dict(color='#F59E0B', size=11))
-    fig_isc.add_trace(go.Scatter(x=[None], y=[None], mode='lines',
-        line=dict(color='#F59E0B', width=2, dash='dash'),
-        name=f'Media periodo: {isc_naz["Isc"].mean():,.0f}', showlegend=True))
-    fig_isc.update_layout(font=dict(family='Inter', size=12), plot_bgcolor=BG_PLOT, paper_bgcolor=BG_PAPER,
-        title=dict(text='Iscritti L-2 Biotecnologie — Italia (2020–2025)', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
-        showlegend=True, legend=dict(font=dict(color='#C8C8C8', size=11), bgcolor='rgba(0,0,0,0)', orientation='h', x=0.5, xanchor='center', y=1.08),
-        margin=dict(t=100, b=80, l=70, r=100), height=520,
-        annotations=[dict(x=0.99, y=-0.13, xref='paper', yref='paper',
-            text='Fonte: MUR-USTAT — Iscritti L-2 Biotecnologie per anno accademico',
-            showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right', align='right')])
-    fig_isc.update_xaxes(showgrid=False, tickfont=dict(color='#C8C8C8', size=13), linecolor='#374151')
-    fig_isc.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#C8C8C8'), linecolor='#374151', rangemode='tozero',
-        title=dict(text='N° iscritti', font=dict(color='#C8C8C8')), range=[0, isc_naz['Isc'].max() * 1.2])
-    st.plotly_chart(fig_isc, use_container_width=True)
 
 # ─── SINTESI ──────────────────────────────────────────────────────────────────
 elif sezione == "Sintesi":
