@@ -60,37 +60,7 @@ footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
-def check_password():
-    if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
-    if st.session_state.authenticated:
-        return True
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("""
-        <div style='text-align:center; margin-bottom: 2rem;'>
-            <div style='font-size:2.5rem; font-weight:700; letter-spacing:-0.04em; color:#F5F5F7;'>
-                Analisi Nazionale<br>L-2 Biotecnologie
-            </div>
-            <div style='color:#A8B8D8; margin-top:0.75rem; font-size:1rem; font-weight:700;'>
-                Accesso riservato
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        with st.form("login_form"):
-            pwd = st.text_input("Codice di accesso", type="password", label_visibility="collapsed", placeholder="Inserisci il codice di accesso")
-            submitted = st.form_submit_button("Accedi", use_container_width=True)
-            if submitted:
-                if pwd == "L2":
-                    st.session_state.authenticated = True
-                    st.rerun()
-                else:
-                    st.error("Codice non valido")
-    return False
 
-if not check_password():
-    st.stop()
 
 @st.cache_data(show_spinner=False)
 def load_data():
@@ -273,8 +243,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     st.markdown('<div class="sidebar-title">Sezioni</div>', unsafe_allow_html=True)
     sezione = st.radio(label="", options=[
-        "Panoramica", "Iscritti", "Immatricolati",
-        "Profilo Studenti", "Percorso Accademico",
+        "Panoramica", "Iscritti", "Profilo Studenti", "Percorso Accademico",
         "Varianti del Corso", "Analisi Avanzata", "Sintesi",
     ], label_visibility="collapsed")
     st.markdown("---")
@@ -292,7 +261,7 @@ if sezione == "Panoramica":
     profilo degli studenti e indicatori di qualità della didattica.</p>""", unsafe_allow_html=True)
     st.markdown("### Indicatori chiave")
     kpi = [
-        {'label': 'Avvii di carriera 2025', 'value': '7.228', 'delta': '↑ stabile', 'color': '#3B82F6'}, 
+        {'label': 'Immatricolati puri 2024/25', 'value': '7.076', 'delta': '↑ stabile', 'color': '#3B82F6'},
         {'label': 'Atenei attivi L-2', 'value': '43', 'delta': 'nessun telematico', 'color': '#34D399'},
         {'label': 'Soddisfatti del corso', 'value': '90.8%', 'delta': 'AlmaLaurea 2025', 'color': '#F59E0B'},
         {'label': 'Prosegue magistrale', 'value': '88.7%', 'delta': 'AlmaLaurea 2025', 'color': '#818CF8'},
@@ -325,44 +294,9 @@ if sezione == "Panoramica":
             </div></div>""", unsafe_allow_html=True)
 
 
-# ─── ISCRITTI (+ tutti i grafici avvii di carriera) ───────────────────────────
-elif sezione == "Iscritti":
-    st.markdown("## Iscritti")
-    st.markdown("---")
-
-    # Grafico iscritti lollipop
-    isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
-    isc_naz = isc_naz[isc_naz['AnnoA'].str[:4].astype(int) >= 2020].copy()
-    isc_naz['anno_short'] = isc_naz['AnnoA'].str[:4] + '/' + isc_naz['AnnoA'].str[7:9]
-    chart_header("Iscritti L-2 Biotecnologie — Italia (2020–2025)",
-        "Numero totale di studenti iscritti a corsi L-2 Biotecnologie in Italia per anno accademico.",
-        "Passa il cursore sui pallini per vedere il valore esatto.")
-    fig_isc = go.Figure()
-    for _, row in isc_naz.iterrows():
-        fig_isc.add_shape(type='line', x0=row['anno_short'], x1=row['anno_short'],
-            y0=0, y1=row['Isc'], line=dict(color='#3B82F6', width=3))
-    fig_isc.add_trace(go.Scatter(x=isc_naz['anno_short'], y=isc_naz['Isc'], mode='markers+text',
-        marker=dict(size=20, color=['#60A5FA' if a == '2024/25' else '#3B82F6' for a in isc_naz['anno_short']], line=dict(color='white', width=2)),
-        text=isc_naz['Isc'].apply(lambda x: f'{x:,.0f}'), textposition='top center',
-        textfont=dict(color='#C8C8C8', size=12, family='Inter'),
-        hovertemplate='<b>%{x}</b><br>Iscritti: <b>%{y:,.0f}</b><extra></extra>', name='Iscritti L-2'))
-    fig_isc.add_hline(y=isc_naz['Isc'].mean(), line=dict(color='#F59E0B', width=2, dash='dash'),
-        annotation_text=f'Media: {isc_naz["Isc"].mean():,.0f}', annotation_position='right',
-        annotation_font=dict(color='#F59E0B', size=11))
-    fig_isc.add_trace(go.Scatter(x=[None], y=[None], mode='lines',
-        line=dict(color='#F59E0B', width=2, dash='dash'),
-        name=f'Media periodo: {isc_naz["Isc"].mean():,.0f}', showlegend=True))
-    fig_isc.update_layout(font=dict(family='Inter', size=12), plot_bgcolor=BG_PLOT, paper_bgcolor=BG_PAPER,
-        title=dict(text='Iscritti L-2 Biotecnologie — Italia (2020–2025)', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
-        showlegend=True, legend=dict(font=dict(color='#C8C8C8', size=11), bgcolor='rgba(0,0,0,0)', orientation='h', x=0.5, xanchor='center', y=1.08),
-        margin=dict(t=100, b=80, l=70, r=100), height=520,
-        annotations=[dict(x=0.99, y=-0.13, xref='paper', yref='paper',
-            text='Fonte: MUR-USTAT — Iscritti L-2 Biotecnologie per anno accademico',
-            showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right', align='right')])
-    fig_isc.update_xaxes(showgrid=False, tickfont=dict(color='#C8C8C8', size=13), linecolor='#374151')
-    fig_isc.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#C8C8C8'), linecolor='#374151', rangemode='tozero',
-        title=dict(text='N° iscritti', font=dict(color='#C8C8C8')), range=[0, isc_naz['Isc'].max() * 1.2])
-    st.plotly_chart(fig_isc, use_container_width=True)
+# ─── AVVII DI CARRIERA ───────────────────────────────────────────────────────
+elif sezione == "Avvii di Carriera":
+    st.markdown("## Avvii di Carriera")
     st.markdown("---")
 
     # G14 — Avvii bar chart
@@ -796,34 +730,7 @@ elif sezione == "Immatricolati":
     fig9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
     fig9.update_yaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
     st.plotly_chart(fig9, use_container_width=True)
-    chart_header("Distribuzione immatricolati per variante di denominazione L-2",
-        "Il treemap mostra le varianti di denominazione dei corsi L-2 in Italia, con dimensione proporzionale al numero di immatricolati e colore che indica il numero di atenei che offrono ciascuna variante.",
-        "Seleziona l'anno con i pulsanti. Passa il cursore sui rettangoli per vedere immatricolati e numero di atenei.")
-    df_var = df_anvur[df_anvur['Anno accademico']>=2020].copy()
-    df_var['corso_nome'] = df_var['corso_nome'].str.title().str.strip()
-    anni_tree = sorted(df_var['Anno accademico'].unique())
-    fig8b = go.Figure()
-    for i, anno in enumerate(anni_tree):
-        subset = df_var[df_var['Anno accademico']==anno].groupby('corso_nome').agg(imm=('imm','sum'), n_atenei=('ateneo_short','nunique')).reset_index()
-        fig8b.add_trace(go.Treemap(labels=subset['corso_nome'], parents=['L-2 Biotecnologie']*len(subset),
-            values=subset['imm'], customdata=subset[['n_atenei','imm']],
-            hovertemplate='<b>%{label}</b><br>Immatricolati: <b>%{customdata[1]:,.0f}</b><br>N° atenei: <b>%{customdata[0]}</b><extra></extra>',
-            marker=dict(colorscale=[[0,'#1E3A5F'],[0.4,'#2563EB'],[0.7,'#60A5FA'],[1,'#BAE6FD']], colors=subset['n_atenei'],
-                colorbar=dict(title=dict(text='N° atenei', font=dict(color='#9CA3AF')), tickfont=dict(color='#9CA3AF')),
-                showscale=True, line=dict(color='#0F172A', width=2)),
-            textfont=dict(size=13, color='white', family='Inter'), visible=(i==0)))
-    buttons_g8 = []
-    for i, anno in enumerate(anni_tree):
-        vis = [j==i for j in range(len(anni_tree))]
-        buttons_g8.append(dict(label=str(anno), method='update',
-            args=[{'visible': vis}, {'title': dict(text=f'Varianti L-2 per immatricolati — {anno}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
-    fig8b.update_layout(title=dict(text=f'Varianti L-2 per immatricolati — {anni_tree[0]}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
-        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.10, yanchor='top',
-            buttons=buttons_g8, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
-            font=dict(size=12, family='Inter', color='white'), active=0, pad=dict(r=6,l=6,t=6,b=6))],
-        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto · Colore = n° atenei che offrono la variante')],
-        height=580, margin=dict(t=120, b=60, l=20, r=20), font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER)
-    st.plotly_chart(fig8b, use_container_width=True)
+
 
 # ─── PROFILO STUDENTI ─────────────────────────────────────────────────────────
 elif sezione == "Profilo Studenti":
@@ -1002,6 +909,35 @@ elif sezione == "Percorso Accademico":
 elif sezione == "Varianti del Corso":
     st.markdown("## Varianti del Corso")
     st.markdown("---")
+    chart_header("Distribuzione immatricolati per variante di denominazione L-2",
+        "Il treemap mostra le varianti di denominazione dei corsi L-2 in Italia, con dimensione proporzionale al numero di immatricolati e colore che indica il numero di atenei che offrono ciascuna variante.",
+        "Seleziona l'anno con i pulsanti. Passa il cursore sui rettangoli per vedere immatricolati e numero di atenei.")
+    df_var = df_anvur[df_anvur['Anno accademico']>=2020].copy()
+    df_var['corso_nome'] = df_var['corso_nome'].str.title().str.strip()
+    anni_tree = sorted(df_var['Anno accademico'].unique())
+    fig8b = go.Figure()
+    for i, anno in enumerate(anni_tree):
+        subset = df_var[df_var['Anno accademico']==anno].groupby('corso_nome').agg(imm=('imm','sum'), n_atenei=('ateneo_short','nunique')).reset_index()
+        fig8b.add_trace(go.Treemap(labels=subset['corso_nome'], parents=['L-2 Biotecnologie']*len(subset),
+            values=subset['imm'], customdata=subset[['n_atenei','imm']],
+            hovertemplate='<b>%{label}</b><br>Immatricolati: <b>%{customdata[1]:,.0f}</b><br>N° atenei: <b>%{customdata[0]}</b><extra></extra>',
+            marker=dict(colorscale=[[0,'#1E3A5F'],[0.4,'#2563EB'],[0.7,'#60A5FA'],[1,'#BAE6FD']], colors=subset['n_atenei'],
+                colorbar=dict(title=dict(text='N° atenei', font=dict(color='#9CA3AF')), tickfont=dict(color='#9CA3AF')),
+                showscale=True, line=dict(color='#0F172A', width=2)),
+            textfont=dict(size=13, color='white', family='Inter'), visible=(i==0)))
+    buttons_g8 = []
+    for i, anno in enumerate(anni_tree):
+        vis = [j==i for j in range(len(anni_tree))]
+        buttons_g8.append(dict(label=str(anno), method='update',
+            args=[{'visible': vis}, {'title': dict(text=f'Varianti L-2 per immatricolati — {anno}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
+    fig8b.update_layout(title=dict(text=f'Varianti L-2 per immatricolati — {anni_tree[0]}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
+        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.10, yanchor='top',
+            buttons=buttons_g8, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
+            font=dict(size=12, family='Inter', color='white'), active=0, pad=dict(r=6,l=6,t=6,b=6))],
+        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto · Colore = n° atenei che offrono la variante')],
+        height=580, margin=dict(t=120, b=60, l=20, r=20), font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER)
+    st.plotly_chart(fig8b, use_container_width=True)
+    st.markdown("---")
 
     chart_header("Tasso di prosecuzione al II anno per variante",
         "Confronto del tasso medio di prosecuzione al II anno (iC14 ANVUR) per ciascuna variante di denominazione L-2, usando 'Biotecnologie' come baseline. Verde = superiore alla baseline, rosso = inferiore.",
@@ -1132,13 +1068,51 @@ elif sezione == "Analisi Avanzata":
     fig_corr.update_yaxes(title=dict(text='Tasso prosecuzione al II anno (%)', font=dict(color='#9CA3AF')), showgrid=True, gridcolor='#1F2937', ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
     st.plotly_chart(fig_corr, use_container_width=True)
 
+
+# ─── ISCRITTI ─────────────────────────────────────────────────────────────────
+elif sezione == "Iscritti":
+    st.markdown("## Iscritti")
+    st.markdown("---")
+    isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
+    isc_naz = isc_naz[isc_naz['AnnoA'].str[:4].astype(int) >= 2020].copy()
+    isc_naz['anno_short'] = isc_naz['AnnoA'].str[:4] + '/' + isc_naz['AnnoA'].str[7:9]
+    chart_header("Iscritti L-2 Biotecnologie — Italia (2020–2025)",
+        "Numero totale di studenti iscritti a corsi L-2 Biotecnologie in Italia per anno accademico.",
+        "Passa il cursore sui pallini per vedere il valore esatto.")
+    fig_isc = go.Figure()
+    for _, row in isc_naz.iterrows():
+        fig_isc.add_shape(type='line', x0=row['anno_short'], x1=row['anno_short'],
+            y0=0, y1=row['Isc'], line=dict(color='#3B82F6', width=3))
+    fig_isc.add_trace(go.Scatter(x=isc_naz['anno_short'], y=isc_naz['Isc'], mode='markers+text',
+        marker=dict(size=20, color=['#60A5FA' if a == '2024/25' else '#3B82F6' for a in isc_naz['anno_short']], line=dict(color='white', width=2)),
+        text=isc_naz['Isc'].apply(lambda x: f'{x:,.0f}'), textposition='top center',
+        textfont=dict(color='#C8C8C8', size=12, family='Inter'),
+        hovertemplate='<b>%{x}</b><br>Iscritti: <b>%{y:,.0f}</b><extra></extra>', name='Iscritti L-2'))
+    fig_isc.add_hline(y=isc_naz['Isc'].mean(), line=dict(color='#F59E0B', width=2, dash='dash'),
+        annotation_text=f'Media: {isc_naz["Isc"].mean():,.0f}', annotation_position='right',
+        annotation_font=dict(color='#F59E0B', size=11))
+    fig_isc.add_trace(go.Scatter(x=[None], y=[None], mode='lines',
+        line=dict(color='#F59E0B', width=2, dash='dash'),
+        name=f'Media periodo: {isc_naz["Isc"].mean():,.0f}', showlegend=True))
+    fig_isc.update_layout(font=dict(family='Inter', size=12), plot_bgcolor=BG_PLOT, paper_bgcolor=BG_PAPER,
+        title=dict(text='Iscritti L-2 Biotecnologie — Italia (2020–2025)', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
+        showlegend=True, legend=dict(font=dict(color='#C8C8C8', size=11), bgcolor='rgba(0,0,0,0)', orientation='h', x=0.5, xanchor='center', y=1.08),
+        margin=dict(t=100, b=80, l=70, r=100), height=520,
+        annotations=[dict(x=0.99, y=-0.13, xref='paper', yref='paper',
+            text='Fonte: MUR-USTAT — Iscritti L-2 Biotecnologie per anno accademico',
+            showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right', align='right')])
+    fig_isc.update_xaxes(showgrid=False, tickfont=dict(color='#C8C8C8', size=13), linecolor='#374151')
+    fig_isc.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#C8C8C8'), linecolor='#374151', rangemode='tozero',
+        title=dict(text='N° iscritti', font=dict(color='#C8C8C8')), range=[0, isc_naz['Isc'].max() * 1.2])
+    st.plotly_chart(fig_isc, use_container_width=True)
+
 # ─── SINTESI ──────────────────────────────────────────────────────────────────
 elif sezione == "Sintesi":
     st.markdown("# Sintesi dell'Analisi")
     st.markdown("---")
     chart_header("Scorecard — indicatori chiave per il sistema L-2", "", "")
     kpi_full = [
-        {'label':'Immatricolati puri/anno','value':'7.076','delta':'stabile dopo COVID','color':'#60A5FA','bg':'#1E3A5F'},
+        {'label':'Avvii di carriera 2025','value':'7.228','delta':'trend stabile 2020-2025','color':'#60A5FA','bg':'#1E3A5F'},
         {'label':'Crescita laureati','value':'+54%','delta':'2010 → 2024','color':'#60A5FA','bg':'#1E3A5F'},
         {'label':'Soddisfatti del corso','value':'90.8%','delta':'AlmaLaurea 2025','color':'#34D399','bg':'#064E3B'},
         {'label':'Prosegue magistrale','value':'88.7%','delta':'AlmaLaurea 2025','color':'#34D399','bg':'#064E3B'},
@@ -1166,11 +1140,11 @@ elif sezione == "Sintesi":
     st.plotly_chart(fig7, use_container_width=True)
     st.markdown("---")
     st.markdown("## Considerazioni principali")
-    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Avvii di carriera al primo anno.</b> Nel 2025 si registrano <b style="color:#3B82F6">7.228 avvii di carriera</b> a livello nazionale, con una distribuzione geografica che vede il Nord concentrare oltre il 50% del totale. Il dato conferma la stabilità della domanda formativa nel settore biotecnologico, con un trend sostanzialmente costante nel quinquennio 2020–2025.</p></div>""", unsafe_allow_html=True)
-    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Distribuzione geografica.</b> Il <b style="color:#3B82F6">Nord Italia</b> concentra oltre il 50% degli avvii di carriera, seguito dal Centro con circa il 27%. La distribuzione è rimasta stabile nel periodo 2020–2025, con il Lazio che conta tre atenei attivi (La Sapienza, Tor Vergata e Tuscia). Molise e Valle d'Aosta non ospitano atenei con corsi L-2 attivi.</p></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Domanda e offerta formativa.</b> In Italia sono <b style="color:#3B82F6">43 gli atenei</b> che offrono corsi L-2 Biotecnologie, senza alcun ateneo telematico. Il numero di immatricolati puri si attesta intorno alle <b style="color:#F5F5F7">7.076 unità</b> nell'anno accademico 2024/25, stabile dopo il calo post-pandemia.</p></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Distribuzione geografica.</b> Il <b style="color:#3B82F6">Nord Italia</b> concentra il 50–55% degli immatricolati. Il <b style="color:#10B981">Centro Italia</b> conta 11 atenei attivi con circa il 27% degli immatricolati. Molise e Valle d'Aosta non ospitano atenei con corsi L-2 attivi.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Profilo e soddisfazione.</b> Il <b style="color:#34D399">90.8%</b> dei laureati si dichiara soddisfatto del corso (AlmaLaurea 2025), con il <b style="color:#34D399">71.7%</b> che si reiscriverebbe allo stesso corso. La prosecuzione alla magistrale è elevatissima: <b style="color:#F5F5F7">88.7%</b>.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Percorso accademico.</b> In media il <b style="color:#3B82F6">54%</b> degli immatricolati prosegue nello stesso corso al secondo anno (iC14). Un ulteriore 33% cambia corso o ateneo senza abbandonare l'università. Solo il <b style="color:#EF4444">13%</b> lascia definitivamente il sistema universitario.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card" style="border-top: 3px solid #3B82F6;">
-    <p><b style="color:#F5F5F7">Il sistema L-2 Biotecnologie</b> presenta un quadro complessivamente positivo: domanda stabile, elevata soddisfazione dei laureati e fortissima propensione alla prosecuzione magistrale. Il tasso di prosecuzione nello stesso corso al II anno si attesta intorno al 54%, dato che va letto considerando che una quota significativa di studenti non abbandona l'università ma sceglie di cambiare percorso.</p>
-    <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Elaborazione: Centro Studi</p>
+    <p><b style="color:#F5F5F7">Il sistema L-2 Biotecnologie</b> mostra un quadro articolato: domanda sostanzialmente stabile nel quinquennio 2020–2025, elevata soddisfazione dei laureati e forte propensione alla prosecuzione magistrale. Un aspetto da monitorare è il tasso di prosecuzione nello stesso corso al II anno, che si attesta intorno al 54%.</p>
+    <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Elaborazione: Ufficio Analisi Istituzionale</p>
     </div>""", unsafe_allow_html=True)
