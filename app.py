@@ -957,5 +957,5 @@ elif sezione == "Sintesi":
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Percorso accademico.</b> In media il <b style="color:#3B82F6">54%</b> degli avvii di carriera prosegue nello stesso corso al secondo anno (iC14). Un ulteriore 33% cambia corso o ateneo senza abbandonare l'università. Solo il <b style="color:#EF4444">13%</b> lascia definitivamente il sistema universitario.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card" style="border-top: 3px solid #3B82F6;">
     <p><b style="color:#F5F5F7">Il sistema L-2 Biotecnologie</b> mostra un quadro articolato: domanda sostanzialmente stabile nel quinquennio 2020–2025, elevata soddisfazione dei laureati e forte propensione alla prosecuzione magistrale. Un aspetto da monitorare è il tasso di prosecuzione nello stesso corso al II anno, che si attesta intorno al 54%.</p>
-    <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Elaborazione: Ufficio Analisi Istituzionale</p>
+    <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Sviluppo: Centro Studi</p>
     </div>""", unsafe_allow_html=True)
