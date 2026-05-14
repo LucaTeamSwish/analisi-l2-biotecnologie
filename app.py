@@ -796,7 +796,34 @@ elif sezione == "Immatricolati":
     fig9.update_xaxes(title=dict(text='Anno accademico', font=dict(color='#9CA3AF')), showgrid=False, tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8')
     fig9.update_yaxes(title=dict(text='N° immatricolati puri', font=dict(color='#9CA3AF')), gridcolor='#1F2937', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', rangemode='tozero')
     st.plotly_chart(fig9, use_container_width=True)
-
+  chart_header("Distribuzione immatricolati per variante di denominazione L-2",
+        "Il treemap mostra le varianti di denominazione dei corsi L-2 in Italia, con dimensione proporzionale al numero di immatricolati e colore che indica il numero di atenei che offrono ciascuna variante.",
+        "Seleziona l'anno con i pulsanti. Passa il cursore sui rettangoli per vedere immatricolati e numero di atenei.")
+    df_var = df_anvur[df_anvur['Anno accademico']>=2020].copy()
+    df_var['corso_nome'] = df_var['corso_nome'].str.title().str.strip()
+    anni_tree = sorted(df_var['Anno accademico'].unique())
+    fig8b = go.Figure()
+    for i, anno in enumerate(anni_tree):
+        subset = df_var[df_var['Anno accademico']==anno].groupby('corso_nome').agg(imm=('imm','sum'), n_atenei=('ateneo_short','nunique')).reset_index()
+        fig8b.add_trace(go.Treemap(labels=subset['corso_nome'], parents=['L-2 Biotecnologie']*len(subset),
+            values=subset['imm'], customdata=subset[['n_atenei','imm']],
+            hovertemplate='<b>%{label}</b><br>Immatricolati: <b>%{customdata[1]:,.0f}</b><br>N° atenei: <b>%{customdata[0]}</b><extra></extra>',
+            marker=dict(colorscale=[[0,'#1E3A5F'],[0.4,'#2563EB'],[0.7,'#60A5FA'],[1,'#BAE6FD']], colors=subset['n_atenei'],
+                colorbar=dict(title=dict(text='N° atenei', font=dict(color='#9CA3AF')), tickfont=dict(color='#9CA3AF')),
+                showscale=True, line=dict(color='#0F172A', width=2)),
+            textfont=dict(size=13, color='white', family='Inter'), visible=(i==0)))
+    buttons_g8 = []
+    for i, anno in enumerate(anni_tree):
+        vis = [j==i for j in range(len(anni_tree))]
+        buttons_g8.append(dict(label=str(anno), method='update',
+            args=[{'visible': vis}, {'title': dict(text=f'Varianti L-2 per immatricolati — {anno}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
+    fig8b.update_layout(title=dict(text=f'Varianti L-2 per immatricolati — {anni_tree[0]}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
+        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.10, yanchor='top',
+            buttons=buttons_g8, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
+            font=dict(size=12, family='Inter', color='white'), active=0, pad=dict(r=6,l=6,t=6,b=6))],
+        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto · Colore = n° atenei che offrono la variante')],
+        height=580, margin=dict(t=120, b=60, l=20, r=20), font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER)
+    st.plotly_chart(fig8b, use_container_width=True)
 
 # ─── PROFILO STUDENTI ─────────────────────────────────────────────────────────
 elif sezione == "Profilo Studenti":
@@ -974,35 +1001,6 @@ elif sezione == "Percorso Accademico":
 # ─── VARIANTI DEL CORSO ───────────────────────────────────────────────────────
 elif sezione == "Varianti del Corso":
     st.markdown("## Varianti del Corso")
-    st.markdown("---")
-    chart_header("Distribuzione immatricolati per variante di denominazione L-2",
-        "Il treemap mostra le varianti di denominazione dei corsi L-2 in Italia, con dimensione proporzionale al numero di immatricolati e colore che indica il numero di atenei che offrono ciascuna variante.",
-        "Seleziona l'anno con i pulsanti. Passa il cursore sui rettangoli per vedere immatricolati e numero di atenei.")
-    df_var = df_anvur[df_anvur['Anno accademico']>=2020].copy()
-    df_var['corso_nome'] = df_var['corso_nome'].str.title().str.strip()
-    anni_tree = sorted(df_var['Anno accademico'].unique())
-    fig8b = go.Figure()
-    for i, anno in enumerate(anni_tree):
-        subset = df_var[df_var['Anno accademico']==anno].groupby('corso_nome').agg(imm=('imm','sum'), n_atenei=('ateneo_short','nunique')).reset_index()
-        fig8b.add_trace(go.Treemap(labels=subset['corso_nome'], parents=['L-2 Biotecnologie']*len(subset),
-            values=subset['imm'], customdata=subset[['n_atenei','imm']],
-            hovertemplate='<b>%{label}</b><br>Immatricolati: <b>%{customdata[1]:,.0f}</b><br>N° atenei: <b>%{customdata[0]}</b><extra></extra>',
-            marker=dict(colorscale=[[0,'#1E3A5F'],[0.4,'#2563EB'],[0.7,'#60A5FA'],[1,'#BAE6FD']], colors=subset['n_atenei'],
-                colorbar=dict(title=dict(text='N° atenei', font=dict(color='#9CA3AF')), tickfont=dict(color='#9CA3AF')),
-                showscale=True, line=dict(color='#0F172A', width=2)),
-            textfont=dict(size=13, color='white', family='Inter'), visible=(i==0)))
-    buttons_g8 = []
-    for i, anno in enumerate(anni_tree):
-        vis = [j==i for j in range(len(anni_tree))]
-        buttons_g8.append(dict(label=str(anno), method='update',
-            args=[{'visible': vis}, {'title': dict(text=f'Varianti L-2 per immatricolati — {anno}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
-    fig8b.update_layout(title=dict(text=f'Varianti L-2 per immatricolati — {anni_tree[0]}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
-        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.10, yanchor='top',
-            buttons=buttons_g8, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
-            font=dict(size=12, family='Inter', color='white'), active=0, pad=dict(r=6,l=6,t=6,b=6))],
-        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto · Colore = n° atenei che offrono la variante')],
-        height=580, margin=dict(t=120, b=60, l=20, r=20), font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER)
-    st.plotly_chart(fig8b, use_container_width=True)
     st.markdown("---")
 
     chart_header("Tasso di prosecuzione al II anno per variante",
