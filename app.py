@@ -302,7 +302,7 @@ elif sezione == "Iscritti":
 
     # G14 — Avvii bar chart
     chart_header("Avvii di Carriera al Primo Anno — L-2 Biotecnologie",
-        "Numero totale nazionale di avvii di carriera al primo anno per anno accademico. Le variazioni percentuali rispetto all'anno precedente sono indicate all'interno delle barre. Il 2025 è evidenziato in azzurro chiaro.",
+        "Numero totale nazionale di avvii di carriera al primo anno per anno accademico.Il 2025 è evidenziato in azzurro chiaro.",
         "Passa il cursore sulle barre per vedere il valore esatto.")
     avvi_naz = df_avvi.groupby('Anno accademico')['Numeratore'].sum().reset_index()
     avvi_naz.columns = ['anno', 'avvii']
