@@ -372,7 +372,7 @@ elif sezione == "Iscritti":
 
     # G17 — Mappa avvii
     chart_header("Avvii di carriera L-2 per regione",
-        "La mappa mostra la distribuzione degli avvii di carriera al primo anno per regione, dal 2020 al 2025. Le regioni in grigio scuro non ospitano atenei con corsi L-2 attivi.",
+        "La mappa mostra la distribuzione degli avvii di carriera al primo anno per regione, dal 2020 al 2025. Le regioni in grigio non ospitano atenei con corsi L-2 attivi.",
         "Seleziona l'anno con i pulsanti. Passa il cursore sulla regione per il dettaglio per ateneo e corso.")
     df_mappa_avvi = df_avvi.groupby(['Anno accademico', 'reg_name'])['Numeratore'].sum().reset_index().rename(columns={'Numeratore': 'avvii'})
     df_hover_avvi2 = df_avvi.groupby(['Anno accademico', 'reg_name', 'Ateneo', 'Nome Corso'])['Numeratore'].sum().reset_index()
