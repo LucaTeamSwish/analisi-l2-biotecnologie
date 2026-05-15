@@ -668,7 +668,7 @@ elif sezione == "Percorso Accademico":
 
     # G11 — Donut
     chart_header("Cosa succede dopo il primo anno — L-2 Biotecnologie",
-        "Il grafico mostra la distribuzione degli avvii di carriera L-2 al termine del primo anno: chi prosegue nello stesso corso (iC14 ANVUR), chi cambia corso o ateneo ma resta nel sistema universitario (differenza iC21-iC14), e chi lascia l'università (complemento a 1 di iC21). La distinzione è importante: la maggior parte di chi non prosegue nello stesso corso non abbandona l'università, ma si trasferisce altrove.",
+        "Il grafico mostra la distribuzione immatricolati puri  L-2 al termine del primo anno: chi prosegue nello stesso corso (iC14 ANVUR), chi cambia corso o ateneo ma resta nel sistema universitario (differenza iC21-iC14), e chi lascia l'università (complemento a 1 di iC21). La distinzione è importante: la maggior parte di chi non prosegue nello stesso corso non abbandona l'università, ma si trasferisce altrove.",
         "Seleziona l'anno con i pulsanti.")
     ic14 = df_ava2[df_ava2['CODICE']=='iC14'].copy()
     ic21 = df_ava2[df_ava2['CODICE']=='iC21'].copy()
@@ -692,7 +692,7 @@ elif sezione == "Percorso Accademico":
             values=[row['prosegue_stesso'],row['cambia_corso'],row['abbandona']],
             hole=0.60, marker=dict(colors=['#3B82F6','#F59E0B','#EF4444'], line=dict(color='#0F172A', width=3)),
             textinfo='percent', textposition='outside', textfont=dict(size=13, color='white', family='Inter'),
-            hovertemplate='<b>%{label}</b><br><b>%{value:.1f}%</b> degli avvii di carriera<extra></extra>',
+            hovertemplate='<b>%{label}</b><br><b>%{value:.1f}%</b> degli immatricolati puri></extra>',
             visible=(i==0), sort=False, pull=[0.03,0.03,0.03]))
     buttons_g11 = []
     for i, anno in enumerate(anni_g11):
@@ -923,7 +923,7 @@ elif sezione == "Sintesi":
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Domanda e offerta formativa.</b> In Italia sono <b style="color:#3B82F6">43 gli atenei</b> che offrono corsi L-2 Biotecnologie, senza alcun ateneo telematico. Gli avvii di carriera al primo anno si attestano a <b style="color:#F5F5F7">7.228</b> nell'anno accademico 2024/25, stabile dopo il calo post-pandemia.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Distribuzione geografica.</b> Il <b style="color:#3B82F6">Nord Italia</b> concentra il 50–55% degli avvii di carriera. Il <b style="color:#10B981">Centro Italia</b> conta 11 atenei attivi con circa il 27% degli avvii. Molise e Valle d'Aosta non ospitano atenei con corsi L-2 attivi.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Profilo e soddisfazione.</b> Il <b style="color:#34D399">90.8%</b> dei laureati si dichiara soddisfatto del corso (AlmaLaurea 2025), con il <b style="color:#34D399">71.7%</b> che si reiscriverebbe allo stesso corso. La prosecuzione alla magistrale è elevatissima: <b style="color:#F5F5F7">88.7%</b>.</p></div>""", unsafe_allow_html=True)
-    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Percorso accademico.</b> In media il <b style="color:#3B82F6">54%</b> degli avvii di carriera prosegue nello stesso corso al secondo anno (iC14). Un ulteriore 33% cambia corso o ateneo senza abbandonare l'università. Solo il <b style="color:#EF4444">13%</b> lascia definitivamente il sistema universitario.</p></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Percorso accademico.</b> In media il <b style="color:#3B82F6">54%</b> degli immatricolati puri prosegue nello stesso corso al secondo anno (iC14). Un ulteriore 33% cambia corso o ateneo senza abbandonare l'università. Solo il <b style="color:#EF4444">13%</b> lascia definitivamente il sistema universitario.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card" style="border-top: 3px solid #3B82F6;">
     <p><b style="color:#F5F5F7">Il sistema L-2 Biotecnologie</b> mostra un quadro articolato: domanda sostanzialmente stabile nel quinquennio 2020–2025, elevata soddisfazione dei laureati e forte propensione alla prosecuzione magistrale. Un aspetto da monitorare è il tasso di prosecuzione nello stesso corso al II anno, che si attesta intorno al 54%.</p>
     <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Sviluppo: Centro Studi</p>
