@@ -972,7 +972,7 @@ elif sezione == "Tasse e Contributi":
     ))
     annotations_t.append(dict(
         x=0.99, y=-0.08, xref='paper', yref='paper',
-        text='⚠️ Dati su campione di 10 atenei statali su 42 totali · Fonte: siti ufficiali atenei a.a. 2024/25',
+        text=' Dati su campione di 10 atenei statali su 42 totali · Fonte: siti ufficiali atenei a.a. 2024/25',
         showarrow=False, font=dict(size=10, color='#7A9CC0', family='Inter'),
         align='right', xanchor='right'
     ))
