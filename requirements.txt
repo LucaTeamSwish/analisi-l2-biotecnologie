@@ -4,3 +4,4 @@ numpy
 plotly
 scipy
 pyarrow>=18.0.0
+matplotlib
