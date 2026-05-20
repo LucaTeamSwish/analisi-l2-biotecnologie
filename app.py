@@ -997,7 +997,7 @@ elif sezione == "Tasse e Contributi":
                             linecolor='#374151', tickangle=-20, row=2, col=1)
     fig_tasse.update_yaxes(showgrid=True, gridcolor='#1F2937', tickfont=dict(color=C_TESTO2_T),
                             linecolor='#374151', tickprefix='€', range=[0, 8800], row=2, col=1)
-    st.plotly_chart(fig_tasse, use_container_width=True)
+    st.plotly_chart(fig_tasse, use_container_width=False, config={'responsive': False})
 
 
 # ─── ANALISI AVANZATA ─────────────────────────────────────────────────────────
