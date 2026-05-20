@@ -987,7 +987,7 @@ elif sezione == "Tasse e Contributi":
         font=dict(family='Inter', size=12),
         legend=dict(font=dict(color=C_TESTO_T, size=12), bgcolor='rgba(0,0,0,0)',
                     orientation='h', x=0.5, xanchor='center', y=0.73),
-        height=880,
+        height=1200,
         margin=dict(t=80, b=80, l=60, r=180),
         xaxis3=dict(overlaying='x2', range=[-0.5, n_t-0.5], visible=False, anchor='y2'),
     )
@@ -997,7 +997,7 @@ elif sezione == "Tasse e Contributi":
                             linecolor='#374151', tickangle=-20, row=2, col=1)
     fig_tasse.update_yaxes(showgrid=True, gridcolor='#1F2937', tickfont=dict(color=C_TESTO2_T),
                             linecolor='#374151', tickprefix='€', range=[0, 8800], row=2, col=1)
-    st.plotly_chart(fig_tasse, use_container_width=False, config={'responsive': False})
+    st.plotly_chart(fig_tasse, use_container_width=True)
 
 
 # ─── ANALISI AVANZATA ─────────────────────────────────────────────────────────
