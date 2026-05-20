@@ -987,7 +987,7 @@ elif sezione == "Tasse e Contributi":
         font=dict(family='Inter', size=12),
         legend=dict(font=dict(color=C_TESTO_T, size=12), bgcolor='rgba(0,0,0,0)',
                     orientation='h', x=0.5, xanchor='center', y=0.73),
-        height=1200,
+        height=1000,
         margin=dict(t=80, b=80, l=60, r=180),
         xaxis3=dict(overlaying='x2', range=[-0.5, n_t-0.5], visible=False, anchor='y2'),
     )
