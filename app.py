@@ -988,7 +988,7 @@ elif sezione == "Tasse e Contributi":
         legend=dict(font=dict(color=C_TESTO_T, size=12), bgcolor='rgba(0,0,0,0)',
                     orientation='h', x=0.5, xanchor='center', y=0.73),
         height=850,
-        margin=dict(t=80, b=80, l=60, r=180),
+        margin=dict(t=80, b=80, l=20, r=20),
         xaxis3=dict(overlaying='x2', range=[-0.5, n_t-0.5], visible=False, anchor='y2'),
     )
     fig_tasse.update_xaxes(visible=False, row=1, col=1)
