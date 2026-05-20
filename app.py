@@ -8,10 +8,6 @@ from scipy import stats
 import os
 import warnings
 warnings.filterwarnings('ignore')
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-from matplotlib.patches import FancyBboxPatch
-from matplotlib.gridspec import GridSpec
 
 st.set_page_config(
     page_title="Analisi Nazionale L-2 Biotecnologie",
@@ -839,132 +835,169 @@ elif sezione == "Tasse e Contributi":
         "")
 
     dati_tasse = [
-        ("San Raffaele",          "Non statale", "Nord",   6640),
-        ("Università di Pavia",   "Statale",     "Nord",   4538),
-        ("Università di Milano",  "Statale",     "Nord",   4101),
-        ("Bicocca",               "Statale",     "Nord",   3736),
-        ("Università di Trieste", "Statale",     "Nord",   3281),
-        ("Università di Padova",  "Statale",     "Nord",   3105),
-        ("La Sapienza",           "Statale",     "Centro", 2924),
-        ("Università di Pisa",    "Statale",     "Centro", 2900),
-        ("Politecnico di Torino", "Statale",     "Nord",   2601),
-        ("Federico II Napoli",    "Statale",     "Sud",    2400),
-        ("Politecnico di Bari",   "Statale",     "Sud",    2100),
+        ('San Raffaele',            'Non statale', 'Nord',   6640),
+        ('Università di Pavia',     'Statale',     'Nord',   4538),
+        ('Università di Milano',    'Statale',     'Nord',   4101),
+        ('Bicocca',                 'Statale',     'Nord',   3736),
+        ('Università di Trieste',   'Statale',     'Nord',   3281),
+        ('Università di Padova',    'Statale',     'Nord',   3105),
+        ('La Sapienza',             'Statale',     'Centro', 2924),
+        ('Università di Pisa',      'Statale',     'Centro', 2900),
+        ('Politecnico di Torino',   'Statale',     'Nord',   2601),
+        ('Federico II Napoli',      'Statale',     'Sud',    2400),
+        ('Politecnico di Bari',     'Statale',     'Sud',    2100),
     ]
 
-    BG_T  = '#0D1B2E'
-    BG2_T = '#112240'
-    BG3_T = '#1A2F4A'
-    C_NORD_T   = '#3B82F6'
-    C_CENTRO_T = '#10B981'
-    C_SUD_T    = '#F59E0B'
+    BG_PAPER_T = '#0D1B2E'
+    BG_PLOT_T  = '#1A2F4A'
+    BG_CARD_T  = '#112240'
+    COLORI_MACRO_T = {'Nord': '#3B82F6', 'Centro': '#10B981', 'Sud': '#F59E0B'}
     C_NONST_T  = '#EF4444'
+    C_GRIGIO_T = '#6B7280'
     C_TESTO_T  = '#C8C8C8'
-    C_TESTO2_T = '#9CA3AF'
-    COLORI_MACRO_T = {'Nord': C_NORD_T, 'Centro': C_CENTRO_T, 'Sud': C_SUD_T}
+    C_TESTO2_T = '#D1D5DB'
 
     df_t = pd.DataFrame(dati_tasse, columns=['Ateneo','Tipo','Macro','Contributo'])
-    statali_t = df_t[df_t['Tipo']=='Statale'].copy()
-    non_statali_t = df_t[df_t['Tipo']=='Non statale'].copy()
+    statali_t     = df_t[df_t['Tipo']=='Statale'].sort_values('Contributo', ascending=False).reset_index(drop=True)
+    non_statali_t = df_t[df_t['Tipo']=='Non statale']
     media_statali_t = statali_t['Contributo'].mean()
     max_row_t = statali_t.loc[statali_t['Contributo'].idxmax()]
     min_row_t = statali_t.loc[statali_t['Contributo'].idxmin()]
+    san_val_t = non_statali_t['Contributo'].values[0]
+    n_t = len(statali_t)
 
-    fig_t = plt.figure(figsize=(20.2, 11.1))
-    fig_t.patch.set_facecolor(BG_T)
-    gs_t = GridSpec(2, 3, figure=fig_t, height_ratios=[1, 2.8],
-                    hspace=0.35, wspace=0.18,
-                    top=0.88, bottom=0.08, left=0.02, right=0.99)
+    fig_tasse = make_subplots(
+        rows=2, cols=1,
+        row_heights=[0.28, 0.72],
+        vertical_spacing=0.04,
+        specs=[[{"type": "xy"}], [{"type": "xy"}]]
+    )
+
+    fig_tasse.add_trace(go.Scatter(
+        x=[0], y=[0], mode='markers',
+        marker=dict(opacity=0), showlegend=False, hoverinfo='skip'
+    ), row=1, col=1)
 
     cards_t = [
         {'titolo': 'STATALE PIÙ CARO',
          'valore': f"€{max_row_t['Contributo']:,.0f}".replace(',','.'),
-         'sub': max_row_t['Ateneo'],
+         'sub1': max_row_t['Ateneo'],
          'sub2': f"Macro area: {max_row_t['Macro']}",
          'colore': COLORI_MACRO_T[max_row_t['Macro']]},
         {'titolo': 'MEDIA STATALI',
          'valore': f"€{media_statali_t:,.0f}".replace(',','.'),
-         'sub': '10 atenei a campione',
+         'sub1': '10 atenei a campione',
          'sub2': 'su 42 statali totali',
-         'colore': '#6B7280'},
+         'colore': C_GRIGIO_T},
         {'titolo': 'STATALE MENO CARO',
          'valore': f"€{min_row_t['Contributo']:,.0f}".replace(',','.'),
-         'sub': min_row_t['Ateneo'],
+         'sub1': min_row_t['Ateneo'],
          'sub2': f"Macro area: {min_row_t['Macro']}",
          'colore': COLORI_MACRO_T[min_row_t['Macro']]},
     ]
 
-    for col_idx_t, card_t in enumerate(cards_t):
-        ax_kpi_t = fig_t.add_subplot(gs_t[0, col_idx_t])
-        ax_kpi_t.set_facecolor(BG2_T)
-        ax_kpi_t.set_xlim(0,1); ax_kpi_t.set_ylim(0,1); ax_kpi_t.axis('off')
-        rect_t = FancyBboxPatch((0.02,0.02),0.96,0.96, boxstyle="round,pad=0.02",
-                                linewidth=1.5, edgecolor=card_t['colore'],
-                                facecolor=BG2_T, zorder=0, transform=ax_kpi_t.transAxes)
-        ax_kpi_t.add_patch(rect_t)
-        ax_kpi_t.axhline(y=0.93, xmin=0.05, xmax=0.95, color=card_t['colore'], linewidth=6, solid_capstyle='round')
-        ax_kpi_t.text(0.5,0.65,card_t['valore'], ha='center',va='center',
-                      fontsize=42,fontweight='bold',color=card_t['colore'],transform=ax_kpi_t.transAxes)
-        ax_kpi_t.text(0.5,0.42,card_t['sub'], ha='center',va='center',
-                      fontsize=12,color='#F5F5F7',fontweight='bold',transform=ax_kpi_t.transAxes)
-        ax_kpi_t.text(0.5,0.25,card_t['sub2'], ha='center',va='center',
-                      fontsize=11,color=C_TESTO2_T,transform=ax_kpi_t.transAxes)
-        ax_kpi_t.text(0.5,0.08,card_t['titolo'], ha='center',va='center',
-                      fontsize=10,fontweight='bold',color=C_TESTO2_T,transform=ax_kpi_t.transAxes)
+    shapes_t = []
+    annotations_t = []
+    card_y0_t = 0.76; card_y1_t = 0.99
+    gaps_t = [0.01, 0.34, 0.67]; card_w_t = 0.31
 
-    ax_t = fig_t.add_subplot(gs_t[1,:])
-    ax_t.set_facecolor(BG3_T)
-    statali_sorted_t = statali_t.sort_values('Contributo',ascending=False).reset_index(drop=True)
-    x_t = np.arange(len(statali_sorted_t))
-    colori_barre_t = [COLORI_MACRO_T[m] for m in statali_sorted_t['Macro']]
-    bars_t = ax_t.bar(x_t, statali_sorted_t['Contributo'], width=0.55,
-                      color=colori_barre_t, alpha=0.85, zorder=3, edgecolor=BG_T, linewidth=1.5)
-    for bar_t, val_t in zip(bars_t, statali_sorted_t['Contributo']):
-        ax_t.text(bar_t.get_x()+bar_t.get_width()/2, val_t+60,
-                  f'€{val_t:,.0f}'.replace(',','.'),
-                  ha='center',va='bottom',fontsize=10,color=C_TESTO_T,fontweight='bold')
+    for i_t, card_t in enumerate(cards_t):
+        x0_t = gaps_t[i_t]; x1_t = x0_t + card_w_t
+        cx_t = (x0_t + x1_t) / 2
+        cy_t = (card_y0_t + card_y1_t) / 2
+        shapes_t.append(dict(type='rect', xref='paper', yref='paper',
+                             x0=x0_t, x1=x1_t, y0=card_y0_t, y1=card_y1_t,
+                             fillcolor=BG_CARD_T, line=dict(color=card_t['colore'], width=2.5),
+                             layer='below', opacity=1))
+        shapes_t.append(dict(type='rect', xref='paper', yref='paper',
+                             x0=x0_t, x1=x1_t, y0=card_y1_t-0.032, y1=card_y1_t,
+                             fillcolor=card_t['colore'], line=dict(width=0),
+                             layer='above', opacity=1))
+        annotations_t.append(dict(x=cx_t, y=card_y1_t-0.02, xref='paper', yref='paper',
+                                   text=f"<b>{card_t['titolo']}</b>",
+                                   font=dict(size=13, color='white', family='Inter'),
+                                   showarrow=False, xanchor='center', yanchor='middle'))
+        annotations_t.append(dict(x=cx_t, y=cy_t+0.055, xref='paper', yref='paper',
+                                   text=f"<b>{card_t['valore']}</b>",
+                                   font=dict(size=36, color=card_t['colore'], family='Inter'),
+                                   showarrow=False, xanchor='center', yanchor='middle'))
+        annotations_t.append(dict(x=cx_t, y=cy_t-0.04, xref='paper', yref='paper',
+                                   text=f"<b>{card_t['sub1']}</b>",
+                                   font=dict(size=13, color='#F5F5F7', family='Inter'),
+                                   showarrow=False, xanchor='center', yanchor='middle'))
+        annotations_t.append(dict(x=cx_t, y=card_y0_t+0.025, xref='paper', yref='paper',
+                                   text=card_t['sub2'],
+                                   font=dict(size=13, color=C_TESTO2_T, family='Inter'),
+                                   showarrow=False, xanchor='center', yanchor='bottom'))
 
-    san_val_t = non_statali_t['Contributo'].values[0]
-    ax_t.axhline(y=san_val_t, color=C_NONST_T, linewidth=2.5, linestyle='--', zorder=5, alpha=0.9)
-    ax_t.text(0.5, san_val_t+120,
-              f'San Raffaele (non statale): €{san_val_t:,.0f}'.replace(',','.'),
-              ha='center',va='bottom',fontsize=13,fontweight='bold',
-              color=C_NONST_T, transform=ax_t.get_yaxis_transform())
-    ax_t.axhline(y=media_statali_t, color='#6B7280', linewidth=2, linestyle=':', zorder=4, alpha=0.9)
-    ax_t.text(len(statali_sorted_t)-0.05, media_statali_t+100,
-              f'Media statali: €{media_statali_t:,.0f}'.replace(',','.'),
-              ha='right',va='bottom',fontsize=12,fontweight='bold',color='#6B7280',fontstyle='italic')
+    for macro_t in ['Nord', 'Centro', 'Sud']:
+        sub_t = statali_t[statali_t['Macro']==macro_t]
+        fig_tasse.add_trace(go.Bar(
+            x=sub_t['Ateneo'], y=sub_t['Contributo'],
+            name=macro_t,
+            marker=dict(color=COLORI_MACRO_T[macro_t], line=dict(width=0), opacity=0.9, cornerradius=4),
+            text=sub_t['Contributo'].apply(lambda v: f'€{v:,.0f}'.replace(',','.')),
+            textposition='outside',
+            textfont=dict(color=C_TESTO_T, size=11, family='Inter'),
+            hovertemplate='<b>%{x}</b><br>Contributo max: <b>€%{y:,.0f}</b><extra></extra>',
+        ), row=2, col=1)
 
-    ax_t.set_xticks(x_t)
-    ax_t.set_xticklabels(statali_sorted_t['Ateneo'], rotation=20, ha='right', fontsize=10, color=C_TESTO_T)
-    ax_t.set_xlim(-0.5, len(statali_sorted_t)-0.5)
+    fig_tasse.add_trace(go.Scatter(
+        x=[-0.5, n_t-0.5], y=[san_val_t, san_val_t],
+        mode='lines', name='Non statale (San Raffaele)',
+        line=dict(color=C_NONST_T, width=2.5, dash='dash'),
+        showlegend=True, xaxis='x3', yaxis='y2',
+        hovertemplate=f'<b>San Raffaele: €{san_val_t:,.0f}</b><extra></extra>',
+    ))
+    fig_tasse.add_trace(go.Scatter(
+        x=[-0.5, n_t-0.5], y=[media_statali_t, media_statali_t],
+        mode='lines', name='Media statali',
+        line=dict(color=C_TESTO2_T, width=2, dash='dot'),
+        showlegend=False, xaxis='x3', yaxis='y2', hoverinfo='skip',
+    ))
 
-    patch_nord_t   = mpatches.Patch(color=C_NORD_T,   label='Nord')
-    patch_centro_t = mpatches.Patch(color=C_CENTRO_T, label='Centro')
-    patch_sud_t    = mpatches.Patch(color=C_SUD_T,    label='Sud')
-    patch_nonst_t  = mpatches.Patch(color=C_NONST_T,  label='Non statale')
-    ax_t.legend(handles=[patch_nord_t,patch_centro_t,patch_sud_t,patch_nonst_t],
-                loc='upper right', fontsize=10, framealpha=0.9,
-                edgecolor='#1F2937', facecolor=BG2_T, labelcolor=C_TESTO_T)
+    annotations_t.append(dict(
+        x=0.5, y=san_val_t, xref='paper', yref='y2',
+        text=f"<b>San Raffaele (non statale): €{san_val_t:,.0f}</b>".replace(',','.'),
+        showarrow=False, font=dict(size=13, color=C_NONST_T, family='Inter'),
+        xanchor='center', yanchor='bottom', yshift=10,
+        bgcolor='rgba(13,27,46,0.92)', bordercolor=C_NONST_T, borderwidth=1.5, borderpad=17,
+    ))
+    annotations_t.append(dict(
+        x=0.99, y=media_statali_t, xref='paper', yref='y2',
+        text=f"<b>Media statali: €{media_statali_t:,.0f}</b>".replace(',','.'),
+        showarrow=False, font=dict(size=13, color=C_TESTO2_T, family='Inter'),
+        xanchor='right', yanchor='bottom', yshift=8,
+        bgcolor='rgba(13,27,46,0.9)', borderpad=8,
+    ))
+    annotations_t.append(dict(
+        x=0.99, y=-0.08, xref='paper', yref='paper',
+        text='⚠️ Dati su campione di 10 atenei statali su 42 totali · Fonte: siti ufficiali atenei a.a. 2024/25',
+        showarrow=False, font=dict(size=10, color='#7A9CC0', family='Inter'),
+        align='right', xanchor='right'
+    ))
 
-    ax_t.yaxis.grid(True, linestyle='--', alpha=0.2, color='#374151')
-    ax_t.set_axisbelow(True)
-    for spine in ['top','right','left']: ax_t.spines[spine].set_visible(False)
-    ax_t.spines['bottom'].set_color('#374151')
-    ax_t.tick_params(left=False)
-    ax_t.set_yticklabels([])
-    ax_t.set_ylim(0, 8500)
-    ax_t.text(0.5,-0.18,
-              '⚠️  Dati su campione di 10 atenei statali su 42 totali  ·  Fonte: siti ufficiali atenei a.a. 2024/25',
-              ha='center',va='bottom',fontsize=9,color=C_TESTO2_T,transform=ax_t.transAxes)
-
-    fig_t.text(0.5,0.95,'CONTRIBUTO MASSIMO ANNUO — L-2 Biotecnologie',
-               ha='center',fontsize=18,fontweight='bold',color='#F5F5F7')
-    fig_t.text(0.5,0.91,'Confronto atenei statali (campione) vs ateneo non statale  ·  A.A. 2024/2025',
-               ha='center',fontsize=11,color=C_TESTO2_T)
-
-    st.pyplot(fig_t, use_container_width=True)
-    plt.close(fig_t)
+    fig_tasse.update_layout(
+        title=dict(text='Contributo massimo annuo — L-2 Biotecnologie',
+                   font=dict(size=20, color='white', family='Inter'),
+                   x=0.5, xanchor='center'),
+        shapes=shapes_t, annotations=annotations_t,
+        barmode='group',
+        plot_bgcolor=BG_PLOT_T, paper_bgcolor=BG_PAPER_T,
+        font=dict(family='Inter', size=12),
+        legend=dict(font=dict(color=C_TESTO_T, size=12), bgcolor='rgba(0,0,0,0)',
+                    orientation='h', x=0.5, xanchor='center', y=0.73),
+        height=880,
+        margin=dict(t=80, b=80, l=60, r=180),
+        xaxis3=dict(overlaying='x2', range=[-0.5, n_t-0.5], visible=False, anchor='y2'),
+    )
+    fig_tasse.update_xaxes(visible=False, row=1, col=1)
+    fig_tasse.update_yaxes(visible=False, row=1, col=1)
+    fig_tasse.update_xaxes(showgrid=False, tickfont=dict(color=C_TESTO_T, size=11),
+                            linecolor='#374151', tickangle=-20, row=2, col=1)
+    fig_tasse.update_yaxes(showgrid=True, gridcolor='#1F2937', tickfont=dict(color=C_TESTO2_T),
+                            linecolor='#374151', tickprefix='€', range=[0, 8800], row=2, col=1)
+    st.plotly_chart(fig_tasse, use_container_width=True)
 
 
 # ─── ANALISI AVANZATA ─────────────────────────────────────────────────────────
