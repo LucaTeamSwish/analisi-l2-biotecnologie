@@ -831,7 +831,7 @@ elif sezione == "Tasse e Contributi":
     st.markdown("## Tasse e Contributi")
     st.markdown("---")
     chart_header("Contributo massimo annuo — L-2 Biotecnologie",
-        "Il grafico confronta il contributo onnicomprensivo massimo annuo per 10 atenei statali (campione) e l'unico ateneo non statale che offre L-2 Biotecnologie in Italia (San Raffaele). I colori indicano la macro area geografica. La linea tratteggiata rossa rappresenta la tassa fissa del San Raffaele; la linea punteggiata grigia la media degli statali del campione.",
+        "Il grafico confronta il contributo massimo annuo per 10 atenei statali (campione) e l'unico ateneo non statale che offre L-2 Biotecnologie in Italia (San Raffaele). I colori indicano la macro area geografica. La linea tratteggiata rossa rappresenta la tassa fissa del San Raffaele; la linea punteggiata grigia la media degli statali del campione.",
         "")
 
     dati_tasse = [
