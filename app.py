@@ -245,7 +245,7 @@ with st.sidebar:
     sezione = st.radio(label="", options=[
         "Panoramica", "Iscritti",
         "Profilo Studenti", "Percorso Accademico",
-        "Varianti del Corso", "Analisi Avanzata", "Sintesi",
+        "Varianti del Corso", "Tasse e Contributi", "Analisi Avanzata", "Sintesi",
     ], label_visibility="collapsed")
     st.markdown("---")
     st.markdown("""<div style='font-size:0.72rem; color:#6B7FA8; line-height:1.6;'>
@@ -283,6 +283,7 @@ if sezione == "Panoramica":
         ("Profilo Studenti", "Soddisfazione, riiscrizione e destinazione alla magistrale.", "#34D399"),
         ("Percorso Accademico", "Laureati, laureati in corso e tasso di prosecuzione al II anno.", "#EF4444"),
         ("Varianti del Corso", "Distribuzione delle varianti di denominazione L-2.", "#818CF8"),
+        ("Tasse e Contributi", "Confronto contributo massimo annuo tra atenei statali (campione) e non statali.", "#EF4444"),
         ("Analisi Avanzata", "iC16bis e correlazione tra dimensione del corso e prosecuzione.", "#60A5FA"),
         ("Sintesi", "Riepilogo dei risultati principali dell'analisi.", "#F59E0B"),
     ]
@@ -302,7 +303,7 @@ elif sezione == "Iscritti":
 
     # G14 — Avvii bar chart
     chart_header("Avvii di Carriera al Primo Anno — L-2 Biotecnologie",
-        "Numero totale nazionale di avvii di carriera al primo anno per anno accademico.Il 2025 è evidenziato in azzurro chiaro.",
+        "Numero totale nazionale di avvii di carriera al primo anno per anno accademico. Le variazioni percentuali rispetto all'anno precedente sono indicate all'interno delle barre. Il 2025 è evidenziato in azzurro chiaro.",
         "Passa il cursore sulle barre per vedere il valore esatto.")
     avvi_naz = df_avvi.groupby('Anno accademico')['Numeratore'].sum().reset_index()
     avvi_naz.columns = ['anno', 'avvii']
@@ -372,7 +373,7 @@ elif sezione == "Iscritti":
 
     # G17 — Mappa avvii
     chart_header("Avvii di carriera L-2 per regione",
-        "La mappa mostra la distribuzione degli avvii di carriera al primo anno per regione, dal 2020 al 2025. Le regioni in grigio non ospitano atenei con corsi L-2 attivi.",
+        "La mappa mostra la distribuzione degli avvii di carriera al primo anno per regione, dal 2020 al 2025. Le regioni in grigio scuro non ospitano atenei con corsi L-2 attivi.",
         "Seleziona l'anno con i pulsanti. Passa il cursore sulla regione per il dettaglio per ateneo e corso.")
     df_mappa_avvi = df_avvi.groupby(['Anno accademico', 'reg_name'])['Numeratore'].sum().reset_index().rename(columns={'Numeratore': 'avvii'})
     df_hover_avvi2 = df_avvi.groupby(['Anno accademico', 'reg_name', 'Ateneo', 'Nome Corso'])['Numeratore'].sum().reset_index()
@@ -544,7 +545,9 @@ elif sezione == "Iscritti":
     st.markdown("---")
 
     # Iscritti L-2
-    
+    chart_header("Iscritti L-2 Biotecnologie — Italia (2020–2025)",
+        "Numero totale di studenti iscritti a corsi L-2 Biotecnologie in Italia per anno accademico.",
+        "Passa il cursore sui pallini per vedere il valore esatto.")
     isc_naz = corso_l2.groupby('AnnoA')['Isc'].sum().reset_index()
     isc_naz = isc_naz[isc_naz['AnnoA'].str[:4].astype(int) >= 2020].copy()
     isc_naz['anno_short'] = isc_naz['AnnoA'].str[:4] + '/' + isc_naz['AnnoA'].str[7:9]
@@ -668,7 +671,7 @@ elif sezione == "Percorso Accademico":
 
     # G11 — Donut
     chart_header("Cosa succede dopo il primo anno — L-2 Biotecnologie",
-        "Il grafico mostra la distribuzione immatricolati puri  L-2 al termine del primo anno: chi prosegue nello stesso corso (iC14 ANVUR), chi cambia corso o ateneo ma resta nel sistema universitario (differenza iC21-iC14), e chi lascia l'università (complemento a 1 di iC21). La distinzione è importante: la maggior parte di chi non prosegue nello stesso corso non abbandona l'università, ma si trasferisce altrove.",
+        "Il grafico mostra la distribuzione degli avvii di carriera L-2 al termine del primo anno: chi prosegue nello stesso corso (iC14 ANVUR), chi cambia corso o ateneo ma resta nel sistema universitario (differenza iC21-iC14), e chi lascia l'università (complemento a 1 di iC21). La distinzione è importante: la maggior parte di chi non prosegue nello stesso corso non abbandona l'università, ma si trasferisce altrove.",
         "Seleziona l'anno con i pulsanti.")
     ic14 = df_ava2[df_ava2['CODICE']=='iC14'].copy()
     ic21 = df_ava2[df_ava2['CODICE']=='iC21'].copy()
@@ -692,7 +695,7 @@ elif sezione == "Percorso Accademico":
             values=[row['prosegue_stesso'],row['cambia_corso'],row['abbandona']],
             hole=0.60, marker=dict(colors=['#3B82F6','#F59E0B','#EF4444'], line=dict(color='#0F172A', width=3)),
             textinfo='percent', textposition='outside', textfont=dict(size=13, color='white', family='Inter'),
-            hovertemplate='<b>%{label}</b><br><b>%{value:.1f}%</b> degli immatricolati puri></extra>',
+            hovertemplate='<b>%{label}</b><br><b>%{value:.1f}%</b> degli avvii di carriera<extra></extra>',
             visible=(i==0), sort=False, pull=[0.03,0.03,0.03]))
     buttons_g11 = []
     for i, anno in enumerate(anni_g11):
@@ -755,6 +758,35 @@ elif sezione == "Percorso Accademico":
 elif sezione == "Varianti del Corso":
     st.markdown("## Varianti del Corso")
     st.markdown("---")
+    chart_header("Distribuzione immatricolati per variante di denominazione L-2",
+        "Il treemap mostra le varianti di denominazione dei corsi L-2 in Italia, con dimensione proporzionale al numero di immatricolati e colore che indica il numero di atenei che offrono ciascuna variante.",
+        "Seleziona l'anno con i pulsanti. Passa il cursore sui rettangoli per vedere immatricolati e numero di atenei.")
+    df_var = df_anvur[df_anvur['Anno accademico']>=2020].copy()
+    df_var['corso_nome'] = df_var['corso_nome'].str.title().str.strip()
+    anni_tree = sorted(df_var['Anno accademico'].unique())
+    fig8b = go.Figure()
+    for i, anno in enumerate(anni_tree):
+        subset = df_var[df_var['Anno accademico']==anno].groupby('corso_nome').agg(imm=('imm','sum'), n_atenei=('ateneo_short','nunique')).reset_index()
+        fig8b.add_trace(go.Treemap(labels=subset['corso_nome'], parents=['L-2 Biotecnologie']*len(subset),
+            values=subset['imm'], customdata=subset[['n_atenei','imm']],
+            hovertemplate='<b>%{label}</b><br>Immatricolati: <b>%{customdata[1]:,.0f}</b><br>N° atenei: <b>%{customdata[0]}</b><extra></extra>',
+            marker=dict(colorscale=[[0,'#1E3A5F'],[0.4,'#2563EB'],[0.7,'#60A5FA'],[1,'#BAE6FD']], colors=subset['n_atenei'],
+                colorbar=dict(title=dict(text='N° atenei', font=dict(color='#9CA3AF')), tickfont=dict(color='#9CA3AF')),
+                showscale=True, line=dict(color='#0F172A', width=2)),
+            textfont=dict(size=13, color='white', family='Inter'), visible=(i==0)))
+    buttons_g8 = []
+    for i, anno in enumerate(anni_tree):
+        vis = [j==i for j in range(len(anni_tree))]
+        buttons_g8.append(dict(label=str(anno), method='update',
+            args=[{'visible': vis}, {'title': dict(text=f'Varianti L-2 per immatricolati — {anno}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center')}]))
+    fig8b.update_layout(title=dict(text=f'Varianti L-2 per immatricolati — {anni_tree[0]}', font=dict(size=18, color='white', family='Inter'), x=0.5, xanchor='center'),
+        updatemenus=[dict(type='buttons', direction='right', x=0.5, xanchor='center', y=1.10, yanchor='top',
+            buttons=buttons_g8, bgcolor='#1F2937', bordercolor='#3B82F6', borderwidth=1,
+            font=dict(size=12, family='Inter', color='white'), active=0, pad=dict(r=6,l=6,t=6,b=6))],
+        annotations=[fonte_annotation('Fonte: ANVUR Cruscotto · Colore = n° atenei che offrono la variante')],
+        height=580, margin=dict(t=120, b=60, l=20, r=20), font=dict(family='Inter', size=12), paper_bgcolor=BG_PAPER)
+    st.plotly_chart(fig8b, use_container_width=True)
+    st.markdown("---")
 
     chart_header("Tasso di prosecuzione al II anno per variante",
         "Confronto del tasso medio di prosecuzione al II anno (iC14 ANVUR) per ciascuna variante di denominazione L-2, usando 'Biotecnologie' come baseline. Verde = superiore alla baseline, rosso = inferiore.",
@@ -792,6 +824,168 @@ elif sezione == "Varianti del Corso":
     fig12.update_xaxes(title=dict(text='% prosecuzione al II anno', font=dict(color='#9CA3AF')), showgrid=False, ticksuffix='%', tickfont=dict(color='#9CA3AF'), linecolor='#C8C8C8', range=[0,110])
     fig12.update_yaxes(showgrid=False, tickfont=dict(size=10, color='#D1D5DB'), linecolor='#C8C8C8')
     st.plotly_chart(fig12, use_container_width=True)
+
+
+# ─── TASSE E CONTRIBUTI ──────────────────────────────────────────────────────
+elif sezione == "Tasse e Contributi":
+    st.markdown("## Tasse e Contributi")
+    st.markdown("---")
+    chart_header("Contributo massimo annuo — L-2 Biotecnologie",
+        "Il grafico confronta il contributo onnicomprensivo massimo annuo per 10 atenei statali (campione) e l'unico ateneo non statale che offre L-2 Biotecnologie in Italia (San Raffaele). I colori indicano la macro area geografica. La linea tratteggiata rossa rappresenta la tassa fissa del San Raffaele; la linea punteggiata grigia la media degli statali del campione.",
+        "Passa il cursore sulle barre per vedere il contributo esatto e la macro area.")
+
+    dati_tasse = [
+        ("San Raffaele",          "Non statale", "Nord",   6640),
+        ("Università di Pavia",   "Statale",     "Nord",   4538),
+        ("Università di Milano",  "Statale",     "Nord",   4101),
+        ("Bicocca",               "Statale",     "Nord",   3736),
+        ("Università di Trieste", "Statale",     "Nord",   3281),
+        ("Università di Padova",  "Statale",     "Nord",   3105),
+        ("La Sapienza",           "Statale",     "Centro", 2924),
+        ("Università di Pisa",    "Statale",     "Centro", 2900),
+        ("Politecnico di Torino", "Statale",     "Nord",   2601),
+        ("Federico II Napoli",    "Statale",     "Sud",    2400),
+        ("Politecnico di Bari",   "Statale",     "Sud",    2100),
+    ]
+
+    df_tasse = pd.DataFrame(dati_tasse, columns=["Ateneo","Tipo","Macro","Contributo"])
+    statali_t = df_tasse[df_tasse["Tipo"] == "Statale"].sort_values("Contributo", ascending=True).reset_index(drop=True)
+    non_stat_t = df_tasse[df_tasse["Tipo"] == "Non statale"]
+    media_stat_t = statali_t["Contributo"].mean()
+    max_row_t = statali_t.loc[statali_t["Contributo"].idxmax()]
+    min_row_t = statali_t.loc[statali_t["Contributo"].idxmin()]
+    san_val_t = non_stat_t["Contributo"].values[0]
+
+    COLORI_MACRO_T = {"Nord": "#3B82F6", "Centro": "#10B981", "Sud": "#F59E0B"}
+    C_NONST_T = "#EF4444"
+    C_GRIGIO_T = "#9CA3AF"
+
+    # SCORECARD
+    col_positions_t = [0.01, 0.34, 0.67]
+    card_w_t = 0.31
+    shapes_t = []
+    annotations_t = []
+
+    cards_t = [
+        {
+            "titolo": "STATALE PIÙ CARO",
+            "valore": f"€{max_row_t['Contributo']:,.0f}".replace(",", "."),
+            "sub1": max_row_t["Ateneo"],
+            "sub2": f"Macro area: {max_row_t['Macro']}",
+            "colore": COLORI_MACRO_T[max_row_t["Macro"]],
+        },
+        {
+            "titolo": "MEDIA STATALI",
+            "valore": f"€{media_stat_t:,.0f}".replace(",", "."),
+            "sub1": "10 atenei a campione",
+            "sub2": "su 42 statali totali",
+            "colore": C_GRIGIO_T,
+        },
+        {
+            "titolo": "STATALE MENO CARO",
+            "valore": f"€{min_row_t['Contributo']:,.0f}".replace(",", "."),
+            "sub1": min_row_t["Ateneo"],
+            "sub2": f"Macro area: {min_row_t['Macro']}",
+            "colore": COLORI_MACRO_T[min_row_t["Macro"]],
+        },
+    ]
+
+    fig_sc = go.Figure()
+    for i, card in enumerate(cards_t):
+        x0 = col_positions_t[i]
+        x1 = x0 + card_w_t
+        y0 = 0.02; y1 = 0.98
+        cx = (x0 + x1) / 2
+        shapes_t.append(dict(type="rect", xref="paper", yref="paper",
+                             x0=x0, x1=x1, y0=y0, y1=y1,
+                             fillcolor="#1A2F4A", line=dict(color=card["colore"], width=1.5), layer="below"))
+        shapes_t.append(dict(type="rect", xref="paper", yref="paper",
+                             x0=x0, x1=x1, y0=y1-0.06, y1=y1,
+                             fillcolor=card["colore"], line=dict(width=0), layer="above"))
+        annotations_t.append(dict(x=cx, y=y1-0.04, xref="paper", yref="paper",
+                                  text=f"<b>{card['titolo']}</b>",
+                                  showarrow=False, font=dict(size=13, color="white", family="Inter"),
+                                  align="center", xanchor="center"))
+        annotations_t.append(dict(x=cx, y=0.62, xref="paper", yref="paper",
+                                  text=f"<b>{card['valore']}</b>",
+                                  showarrow=False, font=dict(size=38, color=card["colore"], family="Inter"),
+                                  align="center", xanchor="center"))
+        annotations_t.append(dict(x=cx, y=0.38, xref="paper", yref="paper",
+                                  text=f"<b>{card['sub1']}</b>",
+                                  showarrow=False, font=dict(size=13, color="#F5F5F7", family="Inter"),
+                                  align="center", xanchor="center"))
+        annotations_t.append(dict(x=cx, y=0.22, xref="paper", yref="paper",
+                                  text=card["sub2"],
+                                  showarrow=False, font=dict(size=12, color=C_GRIGIO_T, family="Inter"),
+                                  align="center", xanchor="center"))
+
+    fig_sc.update_layout(
+        shapes=shapes_t, annotations=annotations_t,
+        height=220, margin=dict(t=10, b=10, l=10, r=10),
+        paper_bgcolor=BG_PAPER, plot_bgcolor=BG_PAPER,
+        xaxis=dict(visible=False, range=[0,1]),
+        yaxis=dict(visible=False, range=[0,1]),
+    )
+    st.plotly_chart(fig_sc, use_container_width=True)
+
+    # GRAFICO BARRE
+    fig_tasse = go.Figure()
+
+    for macro in ["Nord", "Centro", "Sud"]:
+        sub = statali_t[statali_t["Macro"] == macro]
+        fig_tasse.add_trace(go.Bar(
+            x=sub["Contributo"], y=sub["Ateneo"],
+            orientation="h", name=macro,
+            marker=dict(color=COLORI_MACRO_T[macro], line=dict(width=0), opacity=0.9),
+            text=sub["Contributo"].apply(lambda v: f"€{v:,.0f}".replace(",",".")),
+            textposition="outside",
+            textfont=dict(color="#D1D5DB", size=11, family="Inter"),
+            hovertemplate="<b>%{y}</b><br>Contributo max: <b>€%{x:,.0f}</b><extra></extra>",
+        ))
+
+    fig_tasse.add_trace(go.Bar(x=[None], y=[None], orientation="h",
+        name="Non statale", marker=dict(color=C_NONST_T)))
+
+    # Linea San Raffaele
+    fig_tasse.add_vline(x=san_val_t, line=dict(color=C_NONST_T, width=2.5, dash="dash"))
+    fig_tasse.add_annotation(
+        x=san_val_t, y=0.98, xref="x", yref="paper",
+        text=f"<b>San Raffaele (non statale): €{san_val_t:,.0f}</b>".replace(",","."),
+        showarrow=False, font=dict(size=13, color=C_NONST_T, family="Inter"),
+        align="center", xanchor="center", yanchor="top",
+        bgcolor="rgba(17,34,64,0.9)", bordercolor=C_NONST_T, borderwidth=1
+    )
+
+    # Linea media statali
+    fig_tasse.add_vline(x=media_stat_t, line=dict(color=C_GRIGIO_T, width=2, dash="dot"))
+    fig_tasse.add_annotation(
+        x=media_stat_t, y=0.04, xref="x", yref="paper",
+        text=f"<b>Media statali: €{media_stat_t:,.0f}</b>".replace(",","."),
+        showarrow=False, font=dict(size=12, color=C_GRIGIO_T, family="Inter"),
+        align="right", xanchor="right", yanchor="bottom",
+        bgcolor="rgba(17,34,64,0.9)"
+    )
+
+    fig_tasse.update_layout(
+        **PLOT_LAYOUT, title="", barmode="overlay",
+        legend=dict(font=dict(color="#D1D5DB", size=12), bgcolor="rgba(0,0,0,0)",
+                    orientation="h", x=0.5, xanchor="center", y=1.08),
+        xaxis=dict(title=dict(text="Contributo onnicomprensivo massimo (€/anno)", font=dict(color=C_GRIGIO_T)),
+                   showgrid=False, tickprefix="€",
+                   tickfont=dict(color=C_GRIGIO_T), linecolor="#374151", range=[0, 8500]),
+        yaxis=dict(showgrid=False, tickfont=dict(color="#D1D5DB", size=12), linecolor="#374151"),
+        height=520, margin=dict(t=80, b=80, l=220, r=150),
+        annotations=[dict(
+            x=0.99, y=-0.13, xref="paper", yref="paper",
+            text="⚠️ Dati su campione di 10 atenei statali su 42 totali · Fonte: siti ufficiali atenei a.a. 2024/25",
+            showarrow=False, font=dict(size=10, color="#7A9CC0", family="Inter"),
+            align="right", xanchor="right"
+        )]
+    )
+    st.plotly_chart(fig_tasse, use_container_width=True)
+
+    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Tassazione a confronto.</b> Nel campione analizzato, il contributo massimo annuo per gli <b style="color:#3B82F6">atenei statali</b> varia da <b style="color:#F5F5F7">€2.100</b> (Politecnico di Bari) a <b style="color:#F5F5F7">€4.538</b> (Università di Pavia), con una media di circa <b style="color:#F5F5F7">€3.065</b>. L'unico ateneo <b style="color:#EF4444">non statale</b> presente nell'offerta L-2 — il San Raffaele — applica una retta fissa di <b style="color:#EF4444">€6.640</b>, più del doppio della media degli statali. I dati si riferiscono all'a.a. 2024/25 e riguardano un campione di 10 atenei statali su 42 totali.</p></div>""", unsafe_allow_html=True)
+
 
 # ─── ANALISI AVANZATA ─────────────────────────────────────────────────────────
 elif sezione == "Analisi Avanzata":
@@ -923,8 +1117,8 @@ elif sezione == "Sintesi":
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Domanda e offerta formativa.</b> In Italia sono <b style="color:#3B82F6">43 gli atenei</b> che offrono corsi L-2 Biotecnologie, senza alcun ateneo telematico. Gli avvii di carriera al primo anno si attestano a <b style="color:#F5F5F7">7.228</b> nell'anno accademico 2024/25, stabile dopo il calo post-pandemia.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Distribuzione geografica.</b> Il <b style="color:#3B82F6">Nord Italia</b> concentra il 50–55% degli avvii di carriera. Il <b style="color:#10B981">Centro Italia</b> conta 11 atenei attivi con circa il 27% degli avvii. Molise e Valle d'Aosta non ospitano atenei con corsi L-2 attivi.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Profilo e soddisfazione.</b> Il <b style="color:#34D399">90.8%</b> dei laureati si dichiara soddisfatto del corso (AlmaLaurea 2025), con il <b style="color:#34D399">71.7%</b> che si reiscriverebbe allo stesso corso. La prosecuzione alla magistrale è elevatissima: <b style="color:#F5F5F7">88.7%</b>.</p></div>""", unsafe_allow_html=True)
-    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Percorso accademico.</b> In media il <b style="color:#3B82F6">54%</b> degli immatricolati puri prosegue nello stesso corso al secondo anno (iC14). Un ulteriore 33% cambia corso o ateneo senza abbandonare l'università. Solo il <b style="color:#EF4444">13%</b> lascia definitivamente il sistema universitario.</p></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Percorso accademico.</b> In media il <b style="color:#3B82F6">54%</b> degli avvii di carriera prosegue nello stesso corso al secondo anno (iC14). Un ulteriore 33% cambia corso o ateneo senza abbandonare l'università. Solo il <b style="color:#EF4444">13%</b> lascia definitivamente il sistema universitario.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card" style="border-top: 3px solid #3B82F6;">
     <p><b style="color:#F5F5F7">Il sistema L-2 Biotecnologie</b> mostra un quadro articolato: domanda sostanzialmente stabile nel quinquennio 2020–2025, elevata soddisfazione dei laureati e forte propensione alla prosecuzione magistrale. Un aspetto da monitorare è il tasso di prosecuzione nello stesso corso al II anno, che si attesta intorno al 54%.</p>
-    <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Sviluppo: Centro Studi</p>
+    <p style="color:#C8C8C8; font-size:0.82rem; margin-top:1.5rem;">Analisi basata su dati MUR-USTAT, ANVUR AVA2 e AlmaLaurea · Periodo di riferimento: 2010–2025 · Elaborazione: Ufficio Analisi Istituzionale</p>
     </div>""", unsafe_allow_html=True)
