@@ -8,6 +8,10 @@ from scipy import stats
 import os
 import warnings
 warnings.filterwarnings('ignore')
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+from matplotlib.patches import FancyBboxPatch
+from matplotlib.gridspec import GridSpec
 
 st.set_page_config(
     page_title="Analisi Nazionale L-2 Biotecnologie",
@@ -832,7 +836,7 @@ elif sezione == "Tasse e Contributi":
     st.markdown("---")
     chart_header("Contributo massimo annuo — L-2 Biotecnologie",
         "Il grafico confronta il contributo onnicomprensivo massimo annuo per 10 atenei statali (campione) e l'unico ateneo non statale che offre L-2 Biotecnologie in Italia (San Raffaele). I colori indicano la macro area geografica. La linea tratteggiata rossa rappresenta la tassa fissa del San Raffaele; la linea punteggiata grigia la media degli statali del campione.",
-        "Passa il cursore sulle barre per vedere il contributo esatto e la macro area.")
+        "")
 
     dati_tasse = [
         ("San Raffaele",          "Non statale", "Nord",   6640),
@@ -848,143 +852,119 @@ elif sezione == "Tasse e Contributi":
         ("Politecnico di Bari",   "Statale",     "Sud",    2100),
     ]
 
-    df_tasse = pd.DataFrame(dati_tasse, columns=["Ateneo","Tipo","Macro","Contributo"])
-    statali_t = df_tasse[df_tasse["Tipo"] == "Statale"].sort_values("Contributo", ascending=True).reset_index(drop=True)
-    non_stat_t = df_tasse[df_tasse["Tipo"] == "Non statale"]
-    media_stat_t = statali_t["Contributo"].mean()
-    max_row_t = statali_t.loc[statali_t["Contributo"].idxmax()]
-    min_row_t = statali_t.loc[statali_t["Contributo"].idxmin()]
-    san_val_t = non_stat_t["Contributo"].values[0]
+    BG_T  = '#0D1B2E'
+    BG2_T = '#112240'
+    BG3_T = '#1A2F4A'
+    C_NORD_T   = '#3B82F6'
+    C_CENTRO_T = '#10B981'
+    C_SUD_T    = '#F59E0B'
+    C_NONST_T  = '#EF4444'
+    C_TESTO_T  = '#C8C8C8'
+    C_TESTO2_T = '#9CA3AF'
+    COLORI_MACRO_T = {'Nord': C_NORD_T, 'Centro': C_CENTRO_T, 'Sud': C_SUD_T}
 
-    COLORI_MACRO_T = {"Nord": "#3B82F6", "Centro": "#10B981", "Sud": "#F59E0B"}
-    C_NONST_T = "#EF4444"
-    C_GRIGIO_T = "#9CA3AF"
+    df_t = pd.DataFrame(dati_tasse, columns=['Ateneo','Tipo','Macro','Contributo'])
+    statali_t = df_t[df_t['Tipo']=='Statale'].copy()
+    non_statali_t = df_t[df_t['Tipo']=='Non statale'].copy()
+    media_statali_t = statali_t['Contributo'].mean()
+    max_row_t = statali_t.loc[statali_t['Contributo'].idxmax()]
+    min_row_t = statali_t.loc[statali_t['Contributo'].idxmin()]
 
-    # SCORECARD
-    col_positions_t = [0.01, 0.34, 0.67]
-    card_w_t = 0.31
-    shapes_t = []
-    annotations_t = []
+    fig_t = plt.figure(figsize=(20.2, 11.1))
+    fig_t.patch.set_facecolor(BG_T)
+    gs_t = GridSpec(2, 3, figure=fig_t, height_ratios=[1, 2.8],
+                    hspace=0.35, wspace=0.18,
+                    top=0.88, bottom=0.08, left=0.02, right=0.99)
 
     cards_t = [
-        {
-            "titolo": "STATALE PIÙ CARO",
-            "valore": f"€{max_row_t['Contributo']:,.0f}".replace(",", "."),
-            "sub1": max_row_t["Ateneo"],
-            "sub2": f"Macro area: {max_row_t['Macro']}",
-            "colore": COLORI_MACRO_T[max_row_t["Macro"]],
-        },
-        {
-            "titolo": "MEDIA STATALI",
-            "valore": f"€{media_stat_t:,.0f}".replace(",", "."),
-            "sub1": "10 atenei a campione",
-            "sub2": "su 42 statali totali",
-            "colore": C_GRIGIO_T,
-        },
-        {
-            "titolo": "STATALE MENO CARO",
-            "valore": f"€{min_row_t['Contributo']:,.0f}".replace(",", "."),
-            "sub1": min_row_t["Ateneo"],
-            "sub2": f"Macro area: {min_row_t['Macro']}",
-            "colore": COLORI_MACRO_T[min_row_t["Macro"]],
-        },
+        {'titolo': 'STATALE PIÙ CARO',
+         'valore': f"€{max_row_t['Contributo']:,.0f}".replace(',','.'),
+         'sub': max_row_t['Ateneo'],
+         'sub2': f"Macro area: {max_row_t['Macro']}",
+         'colore': COLORI_MACRO_T[max_row_t['Macro']]},
+        {'titolo': 'MEDIA STATALI',
+         'valore': f"€{media_statali_t:,.0f}".replace(',','.'),
+         'sub': '10 atenei a campione',
+         'sub2': 'su 42 statali totali',
+         'colore': '#6B7280'},
+        {'titolo': 'STATALE MENO CARO',
+         'valore': f"€{min_row_t['Contributo']:,.0f}".replace(',','.'),
+         'sub': min_row_t['Ateneo'],
+         'sub2': f"Macro area: {min_row_t['Macro']}",
+         'colore': COLORI_MACRO_T[min_row_t['Macro']]},
     ]
 
-    fig_sc = go.Figure()
-    for i, card in enumerate(cards_t):
-        x0 = col_positions_t[i]
-        x1 = x0 + card_w_t
-        y0 = 0.02; y1 = 0.98
-        cx = (x0 + x1) / 2
-        shapes_t.append(dict(type="rect", xref="paper", yref="paper",
-                             x0=x0, x1=x1, y0=y0, y1=y1,
-                             fillcolor="#1A2F4A", line=dict(color=card["colore"], width=1.5), layer="below"))
-        shapes_t.append(dict(type="rect", xref="paper", yref="paper",
-                             x0=x0, x1=x1, y0=y1-0.06, y1=y1,
-                             fillcolor=card["colore"], line=dict(width=0), layer="above"))
-        annotations_t.append(dict(x=cx, y=y1-0.04, xref="paper", yref="paper",
-                                  text=f"<b>{card['titolo']}</b>",
-                                  showarrow=False, font=dict(size=13, color="white", family="Inter"),
-                                  align="center", xanchor="center"))
-        annotations_t.append(dict(x=cx, y=0.62, xref="paper", yref="paper",
-                                  text=f"<b>{card['valore']}</b>",
-                                  showarrow=False, font=dict(size=38, color=card["colore"], family="Inter"),
-                                  align="center", xanchor="center"))
-        annotations_t.append(dict(x=cx, y=0.38, xref="paper", yref="paper",
-                                  text=f"<b>{card['sub1']}</b>",
-                                  showarrow=False, font=dict(size=13, color="#F5F5F7", family="Inter"),
-                                  align="center", xanchor="center"))
-        annotations_t.append(dict(x=cx, y=0.22, xref="paper", yref="paper",
-                                  text=card["sub2"],
-                                  showarrow=False, font=dict(size=12, color=C_GRIGIO_T, family="Inter"),
-                                  align="center", xanchor="center"))
+    for col_idx_t, card_t in enumerate(cards_t):
+        ax_kpi_t = fig_t.add_subplot(gs_t[0, col_idx_t])
+        ax_kpi_t.set_facecolor(BG2_T)
+        ax_kpi_t.set_xlim(0,1); ax_kpi_t.set_ylim(0,1); ax_kpi_t.axis('off')
+        rect_t = FancyBboxPatch((0.02,0.02),0.96,0.96, boxstyle="round,pad=0.02",
+                                linewidth=1.5, edgecolor=card_t['colore'],
+                                facecolor=BG2_T, zorder=0, transform=ax_kpi_t.transAxes)
+        ax_kpi_t.add_patch(rect_t)
+        ax_kpi_t.axhline(y=0.93, xmin=0.05, xmax=0.95, color=card_t['colore'], linewidth=6, solid_capstyle='round')
+        ax_kpi_t.text(0.5,0.65,card_t['valore'], ha='center',va='center',
+                      fontsize=42,fontweight='bold',color=card_t['colore'],transform=ax_kpi_t.transAxes)
+        ax_kpi_t.text(0.5,0.42,card_t['sub'], ha='center',va='center',
+                      fontsize=12,color='#F5F5F7',fontweight='bold',transform=ax_kpi_t.transAxes)
+        ax_kpi_t.text(0.5,0.25,card_t['sub2'], ha='center',va='center',
+                      fontsize=11,color=C_TESTO2_T,transform=ax_kpi_t.transAxes)
+        ax_kpi_t.text(0.5,0.08,card_t['titolo'], ha='center',va='center',
+                      fontsize=10,fontweight='bold',color=C_TESTO2_T,transform=ax_kpi_t.transAxes)
 
-    fig_sc.update_layout(
-        shapes=shapes_t, annotations=annotations_t,
-        height=220, margin=dict(t=10, b=10, l=10, r=10),
-        paper_bgcolor=BG_PAPER, plot_bgcolor=BG_PAPER,
-        xaxis=dict(visible=False, range=[0,1]),
-        yaxis=dict(visible=False, range=[0,1]),
-    )
-    st.plotly_chart(fig_sc, use_container_width=True)
+    ax_t = fig_t.add_subplot(gs_t[1,:])
+    ax_t.set_facecolor(BG3_T)
+    statali_sorted_t = statali_t.sort_values('Contributo',ascending=False).reset_index(drop=True)
+    x_t = np.arange(len(statali_sorted_t))
+    colori_barre_t = [COLORI_MACRO_T[m] for m in statali_sorted_t['Macro']]
+    bars_t = ax_t.bar(x_t, statali_sorted_t['Contributo'], width=0.55,
+                      color=colori_barre_t, alpha=0.85, zorder=3, edgecolor=BG_T, linewidth=1.5)
+    for bar_t, val_t in zip(bars_t, statali_sorted_t['Contributo']):
+        ax_t.text(bar_t.get_x()+bar_t.get_width()/2, val_t+60,
+                  f'€{val_t:,.0f}'.replace(',','.'),
+                  ha='center',va='bottom',fontsize=10,color=C_TESTO_T,fontweight='bold')
 
-    # GRAFICO BARRE
-    fig_tasse = go.Figure()
+    san_val_t = non_statali_t['Contributo'].values[0]
+    ax_t.axhline(y=san_val_t, color=C_NONST_T, linewidth=2.5, linestyle='--', zorder=5, alpha=0.9)
+    ax_t.text(0.5, san_val_t+120,
+              f'San Raffaele (non statale): €{san_val_t:,.0f}'.replace(',','.'),
+              ha='center',va='bottom',fontsize=13,fontweight='bold',
+              color=C_NONST_T, transform=ax_t.get_yaxis_transform())
+    ax_t.axhline(y=media_statali_t, color='#6B7280', linewidth=2, linestyle=':', zorder=4, alpha=0.9)
+    ax_t.text(len(statali_sorted_t)-0.05, media_statali_t+100,
+              f'Media statali: €{media_statali_t:,.0f}'.replace(',','.'),
+              ha='right',va='bottom',fontsize=12,fontweight='bold',color='#6B7280',fontstyle='italic')
 
-    for macro in ["Nord", "Centro", "Sud"]:
-        sub = statali_t[statali_t["Macro"] == macro]
-        fig_tasse.add_trace(go.Bar(
-            x=sub["Contributo"], y=sub["Ateneo"],
-            orientation="h", name=macro,
-            marker=dict(color=COLORI_MACRO_T[macro], line=dict(width=0), opacity=0.9),
-            text=sub["Contributo"].apply(lambda v: f"€{v:,.0f}".replace(",",".")),
-            textposition="outside",
-            textfont=dict(color="#D1D5DB", size=11, family="Inter"),
-            hovertemplate="<b>%{y}</b><br>Contributo max: <b>€%{x:,.0f}</b><extra></extra>",
-        ))
+    ax_t.set_xticks(x_t)
+    ax_t.set_xticklabels(statali_sorted_t['Ateneo'], rotation=20, ha='right', fontsize=10, color=C_TESTO_T)
+    ax_t.set_xlim(-0.5, len(statali_sorted_t)-0.5)
 
-    fig_tasse.add_trace(go.Bar(x=[None], y=[None], orientation="h",
-        name="Non statale", marker=dict(color=C_NONST_T)))
+    patch_nord_t   = mpatches.Patch(color=C_NORD_T,   label='Nord')
+    patch_centro_t = mpatches.Patch(color=C_CENTRO_T, label='Centro')
+    patch_sud_t    = mpatches.Patch(color=C_SUD_T,    label='Sud')
+    patch_nonst_t  = mpatches.Patch(color=C_NONST_T,  label='Non statale')
+    ax_t.legend(handles=[patch_nord_t,patch_centro_t,patch_sud_t,patch_nonst_t],
+                loc='upper right', fontsize=10, framealpha=0.9,
+                edgecolor='#1F2937', facecolor=BG2_T, labelcolor=C_TESTO_T)
 
-    # Linea San Raffaele
-    fig_tasse.add_vline(x=san_val_t, line=dict(color=C_NONST_T, width=2.5, dash="dash"))
-    fig_tasse.add_annotation(
-        x=san_val_t, y=0.98, xref="x", yref="paper",
-        text=f"<b>San Raffaele (non statale): €{san_val_t:,.0f}</b>".replace(",","."),
-        showarrow=False, font=dict(size=13, color=C_NONST_T, family="Inter"),
-        align="center", xanchor="center", yanchor="top",
-        bgcolor="rgba(17,34,64,0.9)", bordercolor=C_NONST_T, borderwidth=1
-    )
+    ax_t.yaxis.grid(True, linestyle='--', alpha=0.2, color='#374151')
+    ax_t.set_axisbelow(True)
+    for spine in ['top','right','left']: ax_t.spines[spine].set_visible(False)
+    ax_t.spines['bottom'].set_color('#374151')
+    ax_t.tick_params(left=False)
+    ax_t.set_yticklabels([])
+    ax_t.set_ylim(0, 8500)
+    ax_t.text(0.5,-0.18,
+              '⚠️  Dati su campione di 10 atenei statali su 42 totali  ·  Fonte: siti ufficiali atenei a.a. 2024/25',
+              ha='center',va='bottom',fontsize=9,color=C_TESTO2_T,transform=ax_t.transAxes)
 
-    # Linea media statali
-    fig_tasse.add_vline(x=media_stat_t, line=dict(color=C_GRIGIO_T, width=2, dash="dot"))
-    fig_tasse.add_annotation(
-        x=media_stat_t, y=0.04, xref="x", yref="paper",
-        text=f"<b>Media statali: €{media_stat_t:,.0f}</b>".replace(",","."),
-        showarrow=False, font=dict(size=12, color=C_GRIGIO_T, family="Inter"),
-        align="right", xanchor="right", yanchor="bottom",
-        bgcolor="rgba(17,34,64,0.9)"
-    )
+    fig_t.text(0.5,0.95,'CONTRIBUTO MASSIMO ANNUO — L-2 Biotecnologie',
+               ha='center',fontsize=18,fontweight='bold',color='#F5F5F7')
+    fig_t.text(0.5,0.91,'Confronto atenei statali (campione) vs ateneo non statale  ·  A.A. 2024/2025',
+               ha='center',fontsize=11,color=C_TESTO2_T)
 
-    fig_tasse.update_layout(
-        **PLOT_LAYOUT, title="", barmode="overlay",
-        legend=dict(font=dict(color="#D1D5DB", size=12), bgcolor="rgba(0,0,0,0)",
-                    orientation="h", x=0.5, xanchor="center", y=1.08),
-        xaxis=dict(title=dict(text="Contributo onnicomprensivo massimo (€/anno)", font=dict(color=C_GRIGIO_T)),
-                   showgrid=False, tickprefix="€",
-                   tickfont=dict(color=C_GRIGIO_T), linecolor="#374151", range=[0, 8500]),
-        yaxis=dict(showgrid=False, tickfont=dict(color="#D1D5DB", size=12), linecolor="#374151"),
-        height=520, margin=dict(t=80, b=80, l=220, r=150),
-        annotations=[dict(
-            x=0.99, y=-0.13, xref="paper", yref="paper",
-            text="⚠️ Dati su campione di 10 atenei statali su 42 totali · Fonte: siti ufficiali atenei a.a. 2024/25",
-            showarrow=False, font=dict(size=10, color="#7A9CC0", family="Inter"),
-            align="right", xanchor="right"
-        )]
-    )
-    st.plotly_chart(fig_tasse, use_container_width=True)
-
-    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Tassazione a confronto.</b> Nel campione analizzato, il contributo massimo annuo per gli <b style="color:#3B82F6">atenei statali</b> varia da <b style="color:#F5F5F7">€2.100</b> (Politecnico di Bari) a <b style="color:#F5F5F7">€4.538</b> (Università di Pavia), con una media di circa <b style="color:#F5F5F7">€3.065</b>. L'unico ateneo <b style="color:#EF4444">non statale</b> presente nell'offerta L-2 — il San Raffaele — applica una retta fissa di <b style="color:#EF4444">€6.640</b>, più del doppio della media degli statali. I dati si riferiscono all'a.a. 2024/25 e riguardano un campione di 10 atenei statali su 42 totali.</p></div>""", unsafe_allow_html=True)
+    st.pyplot(fig_t, use_container_width=True)
+    plt.close(fig_t)
 
 
 # ─── ANALISI AVANZATA ─────────────────────────────────────────────────────────
@@ -1117,6 +1097,7 @@ elif sezione == "Sintesi":
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Domanda e offerta formativa.</b> In Italia sono <b style="color:#3B82F6">43 gli atenei</b> che offrono corsi L-2 Biotecnologie, senza alcun ateneo telematico. Gli avvii di carriera al primo anno si attestano a <b style="color:#F5F5F7">7.228</b> nell'anno accademico 2024/25, stabile dopo il calo post-pandemia.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Distribuzione geografica.</b> Il <b style="color:#3B82F6">Nord Italia</b> concentra il 50–55% degli avvii di carriera. Il <b style="color:#10B981">Centro Italia</b> conta 11 atenei attivi con circa il 27% degli avvii. Molise e Valle d'Aosta non ospitano atenei con corsi L-2 attivi.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Profilo e soddisfazione.</b> Il <b style="color:#34D399">90.8%</b> dei laureati si dichiara soddisfatto del corso (AlmaLaurea 2025), con il <b style="color:#34D399">71.7%</b> che si reiscriverebbe allo stesso corso. La prosecuzione alla magistrale è elevatissima: <b style="color:#F5F5F7">88.7%</b>.</p></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Tassazione.</b> Il contributo massimo annuo per gli <b style="color:#3B82F6">atenei statali</b> varia da <b style="color:#F5F5F7">€2.100</b> (Politecnico di Bari) a <b style="color:#F5F5F7">€4.538</b> (Università di Pavia), con una media di circa <b style="color:#F5F5F7">€3.065</b> su un campione di 10 atenei statali. L'unico ateneo <b style="color:#EF4444">non statale</b> presente nell'offerta L-2 — il San Raffaele — applica una retta fissa di <b style="color:#EF4444">€6.640</b>, più del doppio della media degli statali.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card"><p><b style="color:#F5F5F7">Percorso accademico.</b> In media il <b style="color:#3B82F6">54%</b> degli avvii di carriera prosegue nello stesso corso al secondo anno (iC14). Un ulteriore 33% cambia corso o ateneo senza abbandonare l'università. Solo il <b style="color:#EF4444">13%</b> lascia definitivamente il sistema universitario.</p></div>""", unsafe_allow_html=True)
     st.markdown("""<div class="section-card" style="border-top: 3px solid #3B82F6;">
     <p><b style="color:#F5F5F7">Il sistema L-2 Biotecnologie</b> mostra un quadro articolato: domanda sostanzialmente stabile nel quinquennio 2020–2025, elevata soddisfazione dei laureati e forte propensione alla prosecuzione magistrale. Un aspetto da monitorare è il tasso di prosecuzione nello stesso corso al II anno, che si attesta intorno al 54%.</p>
