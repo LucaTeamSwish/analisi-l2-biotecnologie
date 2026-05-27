@@ -170,7 +170,9 @@ def load_data():
     df_ava2['ind_float'] = (df_ava2['INDICATORE'].astype(str).str.strip().str.replace(',', '.').str.replace(' ', '')
         .apply(lambda x: float(x) if x not in ['', 'nan', 'None'] else None))
     df_avvi = pd.read_csv(BASE + 'avvidicarriera(L2)Penthaoo.csv')
-    df_lau_corso = pd.read_csv(BASE + '%di_laureati(L2)entroLaDurataDelCorso.csv')
+    df_lau_corso = pd.read_csv(BASE + '%di_laureati(L2)entroLaDurataDelCorso.csv', sep=',', encoding='utf-8')
+    df_lau_corso['Numeratore'] = pd.to_numeric(df_lau_corso['Numeratore'].astype(str).str.replace('.000','',regex=False), errors='coerce')
+    df_lau_corso['Denominatore'] = pd.to_numeric(df_lau_corso['Denominatore'].astype(str).str.replace('.000','',regex=False), errors='coerce')
     df_ic16 = pd.read_csv(BASE + 'IC16bis(L2)Penthaoo.csv')
     ateneo_regione = {
         'Università di Torino': ('Piemonte', 'Piemonte'), 'Piemonte Orientale': ('Piemonte', 'Piemonte'),
