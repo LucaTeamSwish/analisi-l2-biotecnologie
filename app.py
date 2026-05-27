@@ -726,7 +726,8 @@ elif sezione == "Percorso Accademico":
     chart_header("% Laureati entro la Durata Normale del Corso — iC02",
         "Percentuale media nazionale di studenti L-2 che si laureano entro i 3 anni previsti dal corso. Il 2025 è evidenziato in giallo come dato più recente.",
         "Passa il cursore sulle barre per vedere il valore.")
-    lau_naz_corso = df_lau_corso.groupby('Anno accademico')['Numeratore'].mean().reset_index()
+    df_lau_corso['pct'] = df_lau_corso['Numeratore'] / df_lau_corso['Denominatore'] * 100
+    lau_naz_corso = df_lau_corso.groupby('Anno accademico')['pct'].mean().reset_index()
     lau_naz_corso.columns = ['anno','pct']
     lau_naz_corso['pct'] = lau_naz_corso['pct'].round(1)
     media_lau_corso = lau_naz_corso['pct'].mean()
