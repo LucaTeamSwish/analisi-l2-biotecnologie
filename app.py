@@ -585,100 +585,95 @@ elif sezione == "Iscritti":
         "Andamento degli avvii di carriera (iC00a) nei corsi L-2 Biotecnologie erogati interamente in lingua inglese. Camerino eroga un Double Degree (L-2 + L-13 Scienze Biologiche).",
         "Fonte: ANVUR Cruscotto PENTAHO")
 
-    import matplotlib.pyplot as plt
-    import matplotlib
-    matplotlib.use('Agg')
-    import io
-
     df_eng = pd.read_csv('L2_lingua_inglese.csv', sep=None, engine='python')
     df_eng['Nome Breve'] = df_eng['Nome Corso'].str.extract(r'- (.+)$')
     df_eng['Nome Breve'] = df_eng['Nome Breve'].fillna(df_eng['Nome Corso'])
     corsi_list = df_eng['Nome Breve'].unique().tolist()
     n = len(corsi_list)
 
-    BG_FIG   = '#0D1B2E'
-    BG_PANEL = '#112240'
-    MARKERS  = ['o', 'D', 's', '^', 'P', 'X']
+    COLORI_ENG = {}
+    for corso in corsi_list:
+        ateneo = df_eng[df_eng['Nome Breve'] == corso]['Ateneo'].iloc[0]
+        COLORI_ENG[corso] = '#E8A000' if 'Camerino' in ateneo else '#3B82F6'
 
-    COLORI = {}
-    MARK   = {}
-    for i, corso in enumerate(corsi_list):
-        dfc = df_eng[df_eng['Nome Breve'] == corso]
-        ateneo = dfc['Ateneo'].iloc[0]
-        COLORI[corso] = '#E8A000' if 'Camerino' in ateneo else '#3B82F6'
-        MARK[corso] = MARKERS[i % len(MARKERS)]
+    subtitles = []
+    for corso in corsi_list:
+        ateneo = df_eng[df_eng['Nome Breve'] == corso]['Ateneo'].iloc[0]
+        label_extra = ' ⚑ Double Degree (L-2 + L-13)' if 'Camerino' in ateneo else ''
+        subtitles.append(f"{corso}<br><span style='font-size:13px'>{ateneo}{label_extra}</span>")
 
-    ncols = min(n, 3)
-    nrows = (n + ncols - 1) // ncols
-    fig_eng, axes = plt.subplots(nrows, ncols, figsize=(7*ncols, 6*nrows))
-    fig_eng.patch.set_facecolor(BG_FIG)
-
-    if n == 1:
-        axes = [axes]
-    elif nrows == 1:
-        axes = list(axes)
-    else:
-        axes = [ax for row in axes for ax in row]
+    fig_eng = make_subplots(rows=1, cols=n, subplot_titles=subtitles)
 
     for i, corso in enumerate(corsi_list):
-        ax = axes[i]
         dfc = df_eng[df_eng['Nome Breve'] == corso].sort_values('Anno accademico')
-        colore = COLORI[corso]
-        anni   = dfc['Anno accademico'].tolist()
+        ateneo = dfc['Ateneo'].iloc[0]
+        colore = COLORI_ENG[corso]
+        anni   = dfc['Anno accademico'].astype(str).tolist()
         valori = dfc['Indicatore'].tolist()
-        ateneo = dfc['Ateneo'].iloc[0] if 'Ateneo' in dfc.columns else ''
-
-        ax.set_facecolor(BG_PANEL)
-        ax.fill_between(anni, valori, alpha=0.15, color=colore)
-        ax.plot(anni, valori, color=colore, marker=MARK[corso],
-                linewidth=2.5, markersize=8, zorder=3)
-
-        for x, y in zip(anni, valori):
-            if pd.notna(y):
-                ax.annotate(f'{int(y)}', (x, y),
-                            textcoords='offset points', xytext=(0, 12),
-                            ha='center', fontsize=12,
-                            color=colore, fontweight='bold')
-
-        label_extra = '\n⚑ Double Degree (L-2 + L-13)' if 'Camerino' in ateneo else ''
-        ax.set_title(f"{corso}\n{ateneo}{label_extra}", fontsize=11, fontweight='bold',
-                     color=colore, pad=10, linespacing=1.5)
+        max_val = max(valori) if valori else 1
 
         if len(valori) >= 2:
             delta = valori[-1] - valori[0]
             freccia = '▲' if delta >= 0 else '▼'
             col_delta = '#06D6A0' if delta >= 0 else '#F72585'
-            ax.text(0.98, 0.05, f'{freccia} {abs(int(delta))} dal {int(anni[0])}',
-                    transform=ax.transAxes,
-                    ha='right', va='bottom', fontsize=12,
-                    color=col_delta, fontweight='bold')
+            testo_delta = f"{freccia} {abs(int(delta))} dal {anni[0]}"
+        else:
+            testo_delta = ""
 
-        for spine in ax.spines.values():
-            spine.set_visible(False)
-        ax.tick_params(left=False, bottom=False, colors='#A8B8D8')
-        ax.set_yticks([])
-        ax.set_xticks(anni)
-        ax.set_xticklabels([str(int(a)) for a in anni],
-                           fontsize=9, color='#A8B8D8', rotation=45)
-        ax.yaxis.grid(True, linestyle='--', alpha=0.2, color='#CCCCCC', linewidth=0.8)
-        ax.set_axisbelow(True)
-        if valori:
-            ax.set_ylim(0, max(valori) * 1.35)
+        fig_eng.add_trace(go.Scatter(
+            x=anni, y=valori,
+            fill='tozeroy',
+            fillcolor=f'rgba({int(colore[1:3],16)},{int(colore[3:5],16)},{int(colore[5:7],16)},0.15)',
+            line=dict(color=colore, width=2.5),
+            marker=dict(size=10, color=colore, line=dict(color='white', width=1.5)),
+            mode='lines+markers+text',
+            text=[f'{int(v)}' if pd.notna(v) else '' for v in valori],
+            textposition='top center',
+            textfont=dict(color=colore, size=14, family='Inter'),
+            cliponaxis=False,
+            hovertemplate=f'<b>{corso}</b><br>{ateneo}<br>Anno: %{{x}}<br>Avvii: <b>%{{y:.0f}}</b><extra></extra>',
+            showlegend=False
+        ), row=1, col=i+1)
 
-    for j in range(n, len(axes)):
-        axes[j].set_visible(False)
+        if testo_delta:
+            xref = 'x domain' if i == 0 else f'x{i+1} domain'
+            yref = 'y domain' if i == 0 else f'y{i+1} domain'
+            fig_eng.add_annotation(
+                x=0.95, y=0.05,
+                xref=xref, yref=yref,
+                text=f"<b>{testo_delta}</b>",
+                showarrow=False,
+                font=dict(size=13, color=col_delta),
+                xanchor='right', yanchor='bottom'
+            )
 
-    fig_eng.text(0.5, 0.99, 'AVVII DI CARRIERA – CdS L-2 IN LINGUA INGLESE',
-             ha='center', fontsize=15, fontweight='bold', color='#F5F5F7', va='top')
-    fig_eng.text(0.5, 0.94, 'Indicatore iC00a  •  Anni 2020–2025',
-             ha='center', fontsize=10, color='#A8B8D8', va='top')
+        fig_eng.update_xaxes(showgrid=False, tickfont=dict(color='#C8C8C8', size=11),
+            linecolor='#374151', tickangle=-30, row=1, col=i+1)
+        fig_eng.update_yaxes(showgrid=False, showticklabels=False, showline=False,
+            ticks='', rangemode='tozero', range=[0, max_val * 1.5], row=1, col=i+1)
 
-    plt.tight_layout(rect=[0, 0, 1, 0.92])
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=150, bbox_inches='tight', facecolor=BG_FIG)
-    buf.seek(0)
-    st.image(buf, use_container_width=True)
-    plt.close()
+    for annotation in fig_eng.layout.annotations:
+        corso_match = [c for c in corsi_list if c in annotation.text]
+        if corso_match:
+            annotation.font.color = COLORI_ENG[corso_match[0]]
+            annotation.font.size = 14
+
+    fig_eng.update_layout(
+        font=dict(family='Inter', size=12),
+        plot_bgcolor=BG_PANEL, paper_bgcolor=BG_PAPER,
+        title=dict(
+            text='AVVII DI CARRIERA – CdS L-2 IN LINGUA INGLESE<br><span style="font-size:13px;color:#A8B8D8">Indicatore iC00a  •  Anni 2020–2025</span>',
+            font=dict(size=20, color='#F5F5F7', family='Inter'),
+            x=0.5, xanchor='center'
+        ),
+        margin=dict(t=150, b=80, l=30, r=30), height=580,
+        annotations=list(fig_eng.layout.annotations) + [
+            dict(x=0.99, y=-0.12, xref='paper', yref='paper',
+                text='Fonte: ANVUR Cruscotto PENTAHO — iC00a · ⚑ Double Degree L-2 + L-13',
+                showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right')
+        ]
+    )
+    st.plotly_chart(fig_eng, use_container_width=True)
 
 # ─── PROFILO STUDENTI ─────────────────────────────────────────────────────────
 elif sezione == "Profilo Studenti":
