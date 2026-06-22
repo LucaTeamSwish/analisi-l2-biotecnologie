@@ -777,7 +777,7 @@ elif sezione == "Iscritti":
             type='buttons', direction='right',
             x=0.5, xanchor='center', y=1.08, yanchor='top',
             buttons=buttons_avvi,
-            bgcolor=BG_CARD, bordercolor='#3B82F6', borderwidth=1,
+            bgcolor='#112240', bordercolor='#3B82F6', borderwidth=1,
             font=dict(size=12, family='Inter', color='#F5F5F7'),
             active=0, pad=dict(r=6, l=6, t=6, b=6)
         )],
