@@ -580,6 +580,105 @@ elif sezione == "Iscritti":
     fig_isc.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#C8C8C8'), linecolor='#374151', rangemode='tozero',
         title=dict(text='N° iscritti', font=dict(color='#C8C8C8')), range=[0, isc_naz['Isc'].max() * 1.2])
     st.plotly_chart(fig_isc, use_container_width=True)
+    st.markdown("---")
+    chart_header("Avvii di carriera — CdS L-2 erogati in lingua inglese",
+        "Andamento degli avvii di carriera (iC00a) nei corsi L-2 Biotecnologie erogati interamente in lingua inglese. Camerino eroga un Double Degree (L-2 + L-13 Scienze Biologiche).",
+        "Fonte: ANVUR Cruscotto PENTAHO")
+
+    import matplotlib.pyplot as plt
+    import matplotlib
+    matplotlib.use('Agg')
+    import io
+
+    df_eng = pd.read_csv(BASE + 'L2_lingua_inglese.csv', sep=None, engine='python')
+    df_eng['Nome Breve'] = df_eng['Nome Corso'].str.extract(r'- (.+)$')
+    df_eng['Nome Breve'] = df_eng['Nome Breve'].fillna(df_eng['Nome Corso'])
+    corsi_list = df_eng['Nome Breve'].unique().tolist()
+    n = len(corsi_list)
+
+    BG_FIG   = '#0D1B2E'
+    BG_PANEL = '#112240'
+    MARKERS  = ['o', 'D', 's', '^', 'P', 'X']
+
+    COLORI = {}
+    MARK   = {}
+    for i, corso in enumerate(corsi_list):
+        dfc = df_eng[df_eng['Nome Breve'] == corso]
+        ateneo = dfc['Ateneo'].iloc[0]
+        COLORI[corso] = '#E8A000' if 'Camerino' in ateneo else '#3B82F6'
+        MARK[corso] = MARKERS[i % len(MARKERS)]
+
+    ncols = min(n, 3)
+    nrows = (n + ncols - 1) // ncols
+    fig_eng, axes = plt.subplots(nrows, ncols, figsize=(7*ncols, 6*nrows))
+    fig_eng.patch.set_facecolor(BG_FIG)
+
+    if n == 1:
+        axes = [axes]
+    elif nrows == 1:
+        axes = list(axes)
+    else:
+        axes = [ax for row in axes for ax in row]
+
+    for i, corso in enumerate(corsi_list):
+        ax = axes[i]
+        dfc = df_eng[df_eng['Nome Breve'] == corso].sort_values('Anno accademico')
+        colore = COLORI[corso]
+        anni   = dfc['Anno accademico'].tolist()
+        valori = dfc['Indicatore'].tolist()
+        ateneo = dfc['Ateneo'].iloc[0] if 'Ateneo' in dfc.columns else ''
+
+        ax.set_facecolor(BG_PANEL)
+        ax.fill_between(anni, valori, alpha=0.15, color=colore)
+        ax.plot(anni, valori, color=colore, marker=MARK[corso],
+                linewidth=2.5, markersize=8, zorder=3)
+
+        for x, y in zip(anni, valori):
+            if pd.notna(y):
+                ax.annotate(f'{int(y)}', (x, y),
+                            textcoords='offset points', xytext=(0, 12),
+                            ha='center', fontsize=12,
+                            color=colore, fontweight='bold')
+
+        label_extra = '\n⚑ Double Degree (L-2 + L-13)' if 'Camerino' in ateneo else ''
+        ax.set_title(f"{corso}\n{ateneo}{label_extra}", fontsize=11, fontweight='bold',
+                     color=colore, pad=10, linespacing=1.5)
+
+        if len(valori) >= 2:
+            delta = valori[-1] - valori[0]
+            freccia = '▲' if delta >= 0 else '▼'
+            col_delta = '#06D6A0' if delta >= 0 else '#F72585'
+            ax.text(0.98, 0.05, f'{freccia} {abs(int(delta))} dal {int(anni[0])}',
+                    transform=ax.transAxes,
+                    ha='right', va='bottom', fontsize=12,
+                    color=col_delta, fontweight='bold')
+
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.tick_params(left=False, bottom=False, colors='#A8B8D8')
+        ax.set_yticks([])
+        ax.set_xticks(anni)
+        ax.set_xticklabels([str(int(a)) for a in anni],
+                           fontsize=9, color='#A8B8D8', rotation=45)
+        ax.yaxis.grid(True, linestyle='--', alpha=0.2, color='#CCCCCC', linewidth=0.8)
+        ax.set_axisbelow(True)
+        if valori:
+            ax.set_ylim(0, max(valori) * 1.35)
+
+    for j in range(n, len(axes)):
+        axes[j].set_visible(False)
+
+    fig_eng.text(0.5, 0.99, 'AVVII DI CARRIERA – CdS L-2 IN LINGUA INGLESE',
+             ha='center', fontsize=15, fontweight='bold', color='#F5F5F7', va='top')
+    fig_eng.text(0.5, 0.94, 'Indicatore iC00a  •  Anni 2020–2025',
+             ha='center', fontsize=10, color='#A8B8D8', va='top')
+
+    plt.tight_layout(rect=[0, 0, 1, 0.92])
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', dpi=150, bbox_inches='tight', facecolor=BG_FIG)
+    buf.seek(0)
+    st.image(buf, use_container_width=True)
+    plt.close()
 
 # ─── PROFILO STUDENTI ─────────────────────────────────────────────────────────
 elif sezione == "Profilo Studenti":
