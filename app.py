@@ -676,7 +676,7 @@ elif sezione == "Iscritti":
     st.plotly_chart(fig_eng, use_container_width=True)
 
 
-st.markdown("---")
+    st.markdown("---")
     chart_header("Avvii di carriera per ateneo — L-2 Biotecnologie",
         "Avvii di carriera al primo anno (iC00a) per corso e ateneo. I colori indicano la macro area geografica: blu = Nord, verde = Centro, arancio = Sud, viola = Isole.",
         "Seleziona l'anno con i pulsanti. Passa il cursore sulle barre per il dettaglio.")
