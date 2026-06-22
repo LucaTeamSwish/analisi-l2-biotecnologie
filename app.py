@@ -590,7 +590,7 @@ elif sezione == "Iscritti":
     matplotlib.use('Agg')
     import io
 
-    df_eng = pd.read_csv(BASE + 'L2_lingua_inglese.csv', sep=None, engine='python')
+    df_eng = pd.read_csv('L2_lingua_inglese.csv', sep=None, engine='python')
     df_eng['Nome Breve'] = df_eng['Nome Corso'].str.extract(r'- (.+)$')
     df_eng['Nome Breve'] = df_eng['Nome Breve'].fillna(df_eng['Nome Corso'])
     corsi_list = df_eng['Nome Breve'].unique().tolist()
