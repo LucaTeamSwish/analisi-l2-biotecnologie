@@ -660,7 +660,7 @@ elif sezione == "Iscritti":
 
     fig_eng.update_layout(
         font=dict(family='Inter', size=12),
-        plot_bgcolor=BG_PANEL, paper_bgcolor=BG_PAPER,
+        plot_bgcolor='#112240', paper_bgcolor=BG_PAPER,
         title=dict(
             text='AVVII DI CARRIERA – CdS L-2 IN LINGUA INGLESE<br><span style="font-size:13px;color:#A8B8D8">Indicatore iC00a  •  Anni 2020–2025</span>',
             font=dict(size=20, color='#F5F5F7', family='Inter'),
