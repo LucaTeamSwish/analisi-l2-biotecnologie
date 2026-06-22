@@ -675,6 +675,134 @@ elif sezione == "Iscritti":
     )
     st.plotly_chart(fig_eng, use_container_width=True)
 
+
+st.markdown("---")
+    chart_header("Avvii di carriera per ateneo — L-2 Biotecnologie",
+        "Avvii di carriera al primo anno (iC00a) per corso e ateneo. I colori indicano la macro area geografica: blu = Nord, verde = Centro, arancio = Sud, viola = Isole.",
+        "Seleziona l'anno con i pulsanti. Passa il cursore sulle barre per il dettaglio.")
+
+    df_avvi = pd.read_csv('L2_iC00a_avvii_di_carriera.csv', sep=None, engine='python')
+    df_avvi['corso_breve'] = df_avvi['Nome Corso'].str.extract(r'- (.+)$')
+    df_avvi['corso_breve'] = df_avvi['corso_breve'].str.title().str.strip()
+    df_avvi['label'] = df_avvi['corso_breve'] + ' — ' + df_avvi['Ateneo']
+
+    ATENEO_REG_L2 = {
+        'Università di Torino': 'Nord', 'Università di Milano': 'Nord',
+        'Università di Milano-Bicocca': 'Nord', 'Università di Brescia': 'Nord',
+        'Università di Pavia': 'Nord', 'Università di Genova': 'Nord',
+        'Università di Bologna': 'Nord', 'Università di Ferrara': 'Nord',
+        'Università di Modena e Reggio Emilia': 'Nord', 'Università di Parma': 'Nord',
+        'Università di Padova': 'Nord', 'Università di Verona': 'Nord',
+        'Università di Udine': 'Nord', 'Università di Trieste': 'Nord',
+        'Università di Trento': 'Nord', 'Università di Insubria': 'Nord',
+        'Università di Firenze': 'Centro', 'Università di Pisa': 'Centro',
+        'Università di Siena': 'Centro', 'Università di Perugia': 'Centro',
+        'Università di Camerino': 'Centro', 'La Sapienza': 'Centro',
+        'Tor Vergata': 'Centro', 'Roma Tre': 'Centro',
+        'Università della Tuscia': 'Centro', 'Università Politecnica delle Marche': 'Centro',
+        'Università di Urbino': 'Centro',
+        'Federico II': 'Sud', 'Università di Bari': 'Sud',
+        'Università del Salento': 'Sud', 'Università della Calabria': 'Sud',
+        'Università di Catanzaro': 'Sud', 'Università di Chieti-Pescara': 'Sud',
+        "Università de L'Aquila": 'Sud', 'Università di Molise': 'Sud',
+        'Università della Basilicata': 'Sud', 'Università di Salerno': 'Sud',
+        'Università Vanvitelli': 'Sud', 'Università di Foggia': 'Sud',
+        'Università di Palermo': 'Isole', 'Università di Catania': 'Isole',
+        'Università di Messina': 'Isole', 'Università di Cagliari': 'Isole',
+        'Università di Sassari': 'Isole',
+    }
+
+    COLORI_MACRO_L2 = {
+        'Nord': '#3B82F6', 'Centro': '#10B981',
+        'Sud': '#F59E0B', 'Isole': '#8B5CF6'
+    }
+
+    def get_macro_l2(ateneo):
+        for k, v in ATENEO_REG_L2.items():
+            if k.lower() in ateneo.lower() or ateneo.lower() in k.lower():
+                return v
+        return 'Nord'
+
+    df_avvi['macro'] = df_avvi['Ateneo'].apply(get_macro_l2)
+
+    anni_avvi = sorted(df_avvi['Anno accademico'].unique())
+    fig_avvi_at = go.Figure()
+
+    for i, anno in enumerate(anni_avvi):
+        subset = df_avvi[df_avvi['Anno accademico'] == anno].sort_values('Indicatore', ascending=False)
+        fig_avvi_at.add_trace(go.Bar(
+            x=subset['label'],
+            y=subset['Indicatore'],
+            marker=dict(
+                color=[COLORI_MACRO_L2.get(m, '#3B82F6') for m in subset['macro']],
+                line=dict(width=0), opacity=0.9, cornerradius=4
+            ),
+            text=subset['Indicatore'].astype(int).apply(lambda x: f'{x:,}'),
+            textposition='outside',
+            textfont=dict(size=10, color='#C8C8C8'),
+            hovertemplate='<b>%{x}</b><br>Avvii: <b>%{y:,}</b><extra></extra>',
+            visible=(i == 0),
+            showlegend=False
+        ))
+
+    for macro, colore in COLORI_MACRO_L2.items():
+        fig_avvi_at.add_trace(go.Bar(
+            x=[None], y=[None],
+            marker_color=colore,
+            name=macro, visible=True
+        ))
+
+    buttons_avvi = []
+    for i, anno in enumerate(anni_avvi):
+        vis = [j == i for j in range(len(anni_avvi))] + [True] * len(COLORI_MACRO_L2)
+        buttons_avvi.append(dict(
+            label=str(anno),
+            method='update',
+            args=[
+                {'visible': vis},
+                {'title': dict(text=f'Avvii di Carriera L-2 Biotecnologie — {anno}',
+                    font=dict(size=18, color='#F5F5F7', family='Inter'), x=0.5, xanchor='center')}
+            ]
+        ))
+
+    fig_avvi_at.update_layout(
+        font=dict(family='Inter', size=12),
+        plot_bgcolor=BG_PLOT, paper_bgcolor=BG_PAPER,
+        title=dict(
+            text=f'Avvii di Carriera L-2 Biotecnologie — {anni_avvi[0]}',
+            font=dict(size=18, color='#F5F5F7', family='Inter'),
+            x=0.5, xanchor='center'
+        ),
+        updatemenus=[dict(
+            type='buttons', direction='right',
+            x=0.5, xanchor='center', y=1.08, yanchor='top',
+            buttons=buttons_avvi,
+            bgcolor=BG_CARD, bordercolor='#3B82F6', borderwidth=1,
+            font=dict(size=12, family='Inter', color='#F5F5F7'),
+            active=0, pad=dict(r=6, l=6, t=6, b=6)
+        )],
+        legend=dict(
+            title=dict(text='Macro area', font=dict(color='#C8C8C8')),
+            font=dict(color='#C8C8C8'), bgcolor='rgba(0,0,0,0)',
+            x=0.99, y=0.99, xanchor='right', yanchor='top'
+        ),
+        height=700,
+        bargap=0.4,
+        margin=dict(t=130, b=300, l=60, r=60),
+        annotations=[dict(
+            x=0.99, y=-0.80, xref='paper', yref='paper',
+            text='Fonte: ANVUR Cruscotto PENTAHO — iC00a',
+            showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right'
+        )]
+    )
+
+    fig_avvi_at.update_xaxes(showgrid=False, tickfont=dict(color='#C8C8C8', size=9),
+        linecolor='#374151', tickangle=-45)
+    fig_avvi_at.update_yaxes(gridcolor='#1F2937', tickfont=dict(color='#C8C8C8'),
+        linecolor='#374151', rangemode='tozero',
+        title=dict(text='N° avvii di carriera', font=dict(color='#C8C8C8')))
+    st.plotly_chart(fig_avvi_at, use_container_width=True)
+
 # ─── PROFILO STUDENTI ─────────────────────────────────────────────────────────
 elif sezione == "Profilo Studenti":
     st.markdown("## Profilo Studenti")
