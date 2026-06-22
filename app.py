@@ -668,7 +668,7 @@ elif sezione == "Iscritti":
         ),
         margin=dict(t=150, b=80, l=30, r=30), height=580,
         annotations=list(fig_eng.layout.annotations) + [
-            dict(x=0.99, y=-0.12, xref='paper', yref='paper',
+            dict(x=0.99, y=-0.20, xref='paper', yref='paper',
                 text='Fonte: ANVUR Cruscotto PENTAHO — iC00a · ⚑ Double Degree L-2 + L-13',
                 showarrow=False, font=dict(size=10, color='#7A9CC0'), xanchor='right')
         ]
